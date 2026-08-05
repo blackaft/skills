@@ -1,3 +1,7 @@
 .agents/*
 .humans/*
 !.gitkeep
+
+__pycache__/
+.venv
+node_modules
