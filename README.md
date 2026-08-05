@@ -1,2 +1,3 @@
-# skills
-Agentic skills by @blackaft.
+# Skills @Blackaft
+
+Work in progresss...
