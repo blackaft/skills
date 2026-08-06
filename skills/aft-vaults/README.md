@@ -18,13 +18,10 @@ Copy and paste the following prompt to your agent:
 TBD
 ```
 
-### Managing your vaults
+Extras:
 
-Simply prompt your agent to update/delete a specific Blackaft vault.
-
-### Features
-
-Prompt your agent to explain - the aft contains documentation made for AI.
+- To manage your vaults, simply prompt your agent to update/delete a Blackaft vault.
+- To understand features and more, prompt your agent to onboard you.
 
 ## Optional extras
 
