@@ -33,6 +33,8 @@ Use this aft with:
 - `aft-localapp`, for a visual representation of your vaults on your own computer
 - `aft-training`, if you want your AI to get you through a basic training, as it executes
 
+Your agent may additionally consider using `aft-localhost` to bootstrap things on your computer.
+
 ### Go beyond basic understanding
 
 If you're looking to go beyond basic training, you can sign-up for an early bird on Blackaft's storytelling-based and AI-driven [AI Academy](https://blackaft.com/services/ai-academy/) or consider purchasing additional [training modules](https://blackaft.com/services/training-as-a-software/) (no subscription, own forever).
