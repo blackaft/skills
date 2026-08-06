@@ -29,7 +29,7 @@ You can also use this aft together with:
 - `aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
 - `aft-training`, if you want your AI to get you through a basic training, as it executes.
 
-To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
+To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases with this aft, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
 
 Explore Blackaft's public vaults under [blackaft/vaults/](https://github.com/blackaft/vaults/).
 
