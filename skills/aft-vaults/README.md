@@ -6,9 +6,7 @@ Use AI to collect, store and distribute context for AI assistants and agents fro
 
 This skill is an agentic bundle we call an "Aft" - well beyond prompt instructions, it includes workflows, tools, scripts, docs, tests and so forth. The aft allows your agent to use commoditised software on your own computer in a deterministic manner. It avoids context bloat through the use of standard programmatic approaches (i.e. API/JSON).
 
-If you're looking to go beyond the aft's scaffold, sign-up for the waiting list on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
-
-Follow on [X](https://x.com/blackaftx) for updates.
+Follow on [X](https://x.com/blackaftx) for updates impacting Blackaft's services.
 
 ## Get started
 
@@ -30,13 +28,9 @@ You can also use this aft together with:
 - `aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
 - `aft-training`, if you want your AI to get you through a basic training, as it executes.
 
-### Go beyond basic understanding
+If you want to expand this aft with Blackaft's cross-disciplinary services, consider purchasing an intelligence seat at [blackaft.com/services/service-as-a-software/].
 
-If you're looking to go beyond basic training, you can sign-up for an early bird on Blackaft's storytelling-based and AI-driven [AI Academy](https://blackaft.com/services/ai-academy/) or consider purchasing additional [training modules](https://blackaft.com/services/training-as-a-software/) (no subscription, own forever).
-
-Use the `companion-blackaft` skill to explore more with your AI.
-
-For teams, please reach out to associates@blackaft.com.
+Startups and SMEs can reach out to associates@blackaft.com for custom solutions.
 
 ## Why we made this
 
