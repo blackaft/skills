@@ -20,6 +20,7 @@ Extras:
 
 - To manage your vaults, simply prompt your agent to update/delete a Blackaft vault.
 - To understand features and more, prompt your agent to onboard you.
+- To customise any part of the process, you guessed it: prompt you agent.
 
 ## Optional extras
 
