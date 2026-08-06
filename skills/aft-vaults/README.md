@@ -2,11 +2,9 @@
 
 ![Target Audience](https://img.shields.io/badge/Target_Audience-Humans-FF5722?style=flat-square&logo=userpilot&logoColor=white)
 
-Use AI to collect, store and distribute context for AI.
+Use AI to build context vaults for AI. See [examples](https://github.com/blackaft/vaults/).
 
-This skill is an agentic bundle we call an "aft" - well beyond prompt instructions, it includes workflows, tools, scripts, docs, tests and so forth. A packaged software module. The aft allows your agent to use commoditised software on your own computer in a deterministic manner. It avoids context bloat through the use of standard programmatic approaches (i.e. API/JSON).
-
-Follow on [X](https://x.com/blackaftx) for updates impacting Blackaft's services.
+Follow on [X](https://x.com/blackaftx) for service updates.
 
 ## Get started
 
@@ -16,36 +14,42 @@ Copy and paste the following prompt to your agent:
 TBD
 ```
 
-### Using the aft
+### Using this skill
 
-Prompt your agent to:
+Prompt your agent to present options or to:
 
-- Add/update/delete a vault.
+- Create a new vault.
+- Update an existing vault.
 - See a vault.
 - Publish a vault.
 - Fetch a vault.
 - Review a vault.
+- Delete a vault.
 - Create a companion skill for a vault.
 - Understand how the aft works.
 - Customise any part of it.
 
-## Optional extras
+### Works well with
 
-You can also use this aft together with:
+- `skills/blackaft`, Blackaft's alignment principles and prompting interface.
+- `skills/aft-localapp`, visual representation of your vaults on your own computer.
+- `skills/aft-training`, side-by-side explanations during execution.
 
-- `skills/blackaft`, to use Blackaft's alignment principle and prompting interface.
-- `skills/aft-localapp`, for a visual representation of your vaults on your own computer (to get things running, your agent may also conside using `skills/aft-localhost`).
-- `skills/aft-training`, if you want your agent to get you through a basic training, as it executes.
+## How the skill works
 
-To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases with this aft, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
+We believe software will be readily available to everyone with AI. But that means services will also become software running on your own computer, using AI.
 
-Explore Blackaft's public vaults under [blackaft/vaults/](https://github.com/blackaft/vaults/).
+So we're focusing on bridging the gap between service and software for AI.
 
-## Why we made this
+This skill is an agentic bundle we call an aft.
 
-We believe software will be readily available to everyone, with AI. But, that means services will also become software running on your own computer, through AI.
+Afts package workflows, tools, scripts, docs and tests into modular programs for AI agents, using software on your own computer. Because they rely on structured interfaces (e.g. JSON) instead of descriptive prompts, they avoid context bloat.
 
-So, we're focusing on bridging the gap between service and software, for AI.
+## Commercial extensions
+
+Connect this aft to Blackaft's cross-disciplinary frameworks, tools and knowledge bases with the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
+
+Startups and SMEs can contact associates@blackaft.com for custom deployments.
 
 ---
 
