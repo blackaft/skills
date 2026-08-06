@@ -24,6 +24,7 @@ Prompt your agent to:
 - See a vault.
 - Publish a vault.
 - Fetch a vault.
+- Create a companion skill for a vault.
 - Understand how the aft works.
 - Customise any part of it.
 
