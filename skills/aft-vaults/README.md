@@ -2,7 +2,7 @@
 
 ![Target Audience](https://img.shields.io/badge/Target_Audience-Humans-FF5722?style=flat-square&logo=userpilot&logoColor=white)
 
-Use AI to collect and distribute context for AI assistants and agents from local and remote sources.
+Use AI to collect, store and distribute context for AI assistants and agents from local and remote sources.
 
 This skill is an agentic bundle called an "Aft" - well beyond prompt instructions, it includes necessary deterministic workflows, tools and scripts. The aft allows your agent to use commoditised software on your own computer, based on Blackaft's harness engineering. It avoids context bloat by providing content to agents through standard programmatic approaches (API/JSON).
 
