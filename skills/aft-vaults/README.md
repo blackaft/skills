@@ -28,9 +28,7 @@ You can also use this aft together with:
 - `aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
 - `aft-training`, if you want your AI to get you through a basic training, as it executes.
 
-If you want to expand this aft with Blackaft's cross-disciplinary services, consider purchasing an intelligence seat at [blackaft.com/services/service-as-a-software/].
-
-Startups and SMEs can reach out to associates@blackaft.com for custom solutions.
+If you want to expand this aft with Blackaft's cross-disciplinary services, consider purchasing an intelligence seat at [blackaft.com](blackaft.com/services/service-as-a-software/). Startups and SMEs can reach out to associates@blackaft.com for custom solutions.
 
 ## Why we made this
 
