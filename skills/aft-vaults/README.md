@@ -49,7 +49,7 @@ Afts package workflows, tools, scripts, docs and tests into modular programs for
 
 Connect your software to cross-disciplinary services through the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
 
-Contact associates@blackaft.com for custom deployments.
+Contact associates@blackaft.com for custom solutions.
 
 ---
 
