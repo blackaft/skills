@@ -2,7 +2,7 @@
 
 ![Target Audience](https://img.shields.io/badge/Target_Audience-Humans-FF5722?style=flat-square&logo=userpilot&logoColor=white)
 
-Use AI to build and distribute context vaults for AI. See [examples](https://github.com/blackaft/vaults/).
+Use AI to build and distribute portable context for AI. See [examples](https://github.com/blackaft/vaults/).
 
 This skill is a service module for AI. We call these afts. It bundles a service into software that your AI runs on your computer. Because it relies on structured interfaces (e.g. APIs,  JSON, CLIs) instead of descriptive prompts, it avoids context bloat.
 
