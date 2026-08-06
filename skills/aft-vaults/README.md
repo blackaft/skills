@@ -19,15 +19,16 @@ TBD
 Extras:
 
 - To manage your vaults, simply prompt your agent to update/delete a Blackaft vault.
-- To understand features and more, prompt your agent to onboard you.
+- To understand how it works, prompt your agent to onboard you.
 - To customise any part of the process, you guessed it: prompt you agent.
 
 ## Optional extras
 
 You can also use this aft together with:
 
-- `aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
-- `aft-training`, if you want your AI to get you through a basic training, as it executes.
+- `skills/blackaft`, to use Blackaft's alignment principle and prompting interface.
+- `skills/aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
+- `skills/aft-training`, if you want your AI to get you through a basic training, as it executes.
 
 To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases with this aft, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
 
