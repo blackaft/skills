@@ -47,9 +47,9 @@ Afts package workflows, tools, scripts, docs and tests into modular programs for
 
 ## Commercial extensions
 
-Connect this aft to Blackaft's cross-disciplinary frameworks, tools and knowledge bases with the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
+Connect this aft to cross-disciplinary frameworks, tools and knowledge bases with the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
 
-Startups and SMEs can contact associates@blackaft.com for custom deployments.
+Contact associates@blackaft.com for custom deployments.
 
 ---
 
