@@ -31,7 +31,7 @@ You can also use this aft together with:
 
 To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
 
-Explore Blackaft's public vaults under [blackaft/vaults/](https://github.com/blackaft/skills).
+Explore Blackaft's public vaults under [blackaft/vaults/](https://github.com/blackaft/vaults/).
 
 ## Why we made this
 
