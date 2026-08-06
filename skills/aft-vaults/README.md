@@ -25,7 +25,7 @@ Extras:
 
 ## Optional extras
 
-Use this aft with:
+You can also use this aft together with:
 
 - `aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
 - `aft-training`, if you want your AI to get you through a basic training, as it executes.
