@@ -4,7 +4,7 @@
 
 Use AI to collect, store and distribute context for AI.
 
-This skill is an agentic bundle we call an "Aft" - well beyond prompt instructions, it includes workflows, tools, scripts, docs, tests and so forth. The aft allows your agent to use commoditised software on your own computer in a deterministic manner. It avoids context bloat through the use of standard programmatic approaches (i.e. API/JSON).
+This skill is an agentic bundle we call an "aft" - well beyond prompt instructions, it includes workflows, tools, scripts, docs, tests and so forth. The aft allows your agent to use commoditised software on your own computer in a deterministic manner. It avoids context bloat through the use of standard programmatic approaches (i.e. API/JSON).
 
 Follow on [X](https://x.com/blackaftx) for updates impacting Blackaft's services.
 
