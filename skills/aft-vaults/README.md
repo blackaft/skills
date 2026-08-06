@@ -40,7 +40,7 @@ For teams, please reach out to associates@blackaft.com.
 
 ## Why we made this
 
-We believe software should now be readily available to everyone, with AI. But, that means services are now software running on your computer, through AI.
+We believe software should now be readily available to everyone, with AI. But, that means services can now become software running on your own computer, through AI.
 
 So, we're focusing on how that software runs, for AI.
 
