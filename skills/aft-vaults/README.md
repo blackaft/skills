@@ -45,7 +45,7 @@ This skill is an agentic bundle we call an aft.
 
 Afts package workflows, tools, scripts, docs and tests into modular programs for AI agents, using software on your own computer. Because they rely on structured interfaces (e.g. APIs and JSON) instead of descriptive prompts, they avoid context bloat.
 
-## Commercial extensions
+### Commercial extensions
 
 Connect your software to cross-disciplinary services through the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
 
