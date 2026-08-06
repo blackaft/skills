@@ -23,6 +23,7 @@ Prompt your agent to:
 - Add/update/delete a vault.
 - See a vault.
 - Publish a vault.
+- Fetch a vault.
 - Understand how the aft works.
 - Customise any part of it.
 
