@@ -6,7 +6,7 @@ Use AI to build and distribute portable context across different AIs.
 
 See [examples](https://github.com/blackaft/vaults/).
 
-This skill is a service module for AI, like a standalone app. We call these afts. It packages a service into software that AI can run on your computer. It relies on structured interfaces (e.g. APIs and CLIs) instead of natural-language prompts.
+This skill is a service module for AI, like a standalone app. We call these afts. They ship services as software that AI can execute on your computer, relying on structured interfaces (e.g. APIs and CLIs) rather than natural-language prompts.
 
 Follow on [X](https://x.com/blackaftx) for service updates.
 
