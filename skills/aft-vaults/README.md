@@ -34,7 +34,7 @@ If you want to expand this aft with Blackaft's cross-disciplinary services, cons
 
 We believe software will be readily available to everyone, with AI. But, that means services will also become software running on your own computer, through AI.
 
-So, we're focusing on the middle layer between the service and the software, for AI.
+So, we're focusing our expertise on the intelligence between them.
 
 ---
 
