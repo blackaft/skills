@@ -1,6 +1,6 @@
 ---
 name: aft-localhost
-description: Use this skill to bootstrap environments locally. Workflows available include git, docker, php (composer), python (pip), nodejs (npm, npx) and aws, gcloud, gh clis.
+description: Use this skill to bootstrap environments locally. Workflows available include homebrew, git, docker, php (composer), python (pip), nodejs (npm, npx) and aws, gcloud, gh clis.
 ---
 
 # Aft: Localhost by Blackaft
