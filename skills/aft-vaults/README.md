@@ -31,7 +31,7 @@ Prompt your agent to:
 You can also use this aft together with:
 
 - `skills/blackaft`, to use Blackaft's alignment principle and prompting interface.
-- `skills/aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `aft-localhost` to get things running).
+- `skills/aft-localapp`, for a visual representation of your vaults on your own computer (your agent may additionally consider `skills/aft-localhost` to get things running).
 - `skills/aft-training`, if you want your AI to get you through a basic training, as it executes.
 
 To unlock Blackaft's cross-disciplinary frameworks, tools and knowledge bases with this aft, connect your agent to the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/) - startups and SMEs can contact associates@blackaft.com for custom and bespoke deployments.
