@@ -37,17 +37,17 @@ Prompt your agent to present options or to:
 - `skills/aft-localapp`, visual representation of your vaults on your own computer.
 - `skills/aft-training`, side-by-side explanations during execution.
 
-## How the skill works
-
-We believe software will be readily available to everyone with AI. But that means services will also become software running on your own computer, using AI.
-
-So we're focusing on bridging the gap between service and software.
-
 ### Commercial extensions
 
 Connect your software to cross-disciplinary services through the MCP Server on [blackaft.com](https://blackaft.com/services/service-as-a-software/).
 
 Contact associates@blackaft.com for custom solutions.
+
+## Why we made this
+
+We believe software will be readily available to everyone with AI. But that means services will also become software running on your own computer, using AI.
+
+So we're focusing on bridging the gap between service and software.
 
 ---
 
