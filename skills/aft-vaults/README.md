@@ -2,7 +2,9 @@
 
 ![Target Audience](https://img.shields.io/badge/Target_Audience-Humans-FF5722?style=flat-square&logo=userpilot&logoColor=white)
 
-Use AI to build context vaults for AI. See [examples](https://github.com/blackaft/vaults/).
+Use AI to build and distribute context vaults for AI. See [examples](https://github.com/blackaft/vaults/).
+
+This skill is a service module for AI. We call these afts. It bundles a service into software that your AI runs on your computer. Because it relies on structured interfaces (e.g. APIs and JSON) instead of descriptive prompts, it avoids context bloat.
 
 Follow on [X](https://x.com/blackaftx) for service updates.
 
@@ -39,11 +41,7 @@ Prompt your agent to present options or to:
 
 We believe software will be readily available to everyone with AI. But that means services will also become software running on your own computer, using AI.
 
-So we're focusing on bridging the gap between service and software for AI.
-
-This skill is an agentic bundle we call an aft.
-
-Afts package workflows, tools, scripts, docs and tests into modular programs for AI agents, using software on your own computer. Because they rely on structured interfaces (e.g. APIs and JSON) instead of descriptive prompts, they avoid context bloat.
+So we're focusing on bridging the gap between service and software.
 
 ### Commercial extensions
 
