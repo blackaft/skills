@@ -20,7 +20,7 @@ TBD
 
 Prompt your agent to:
 
-- Add/update/delete a specific Blackaft vault.
+- Add/update/delete a vault.
 - See a vault.
 - Publish a vault.
 - Understand how the aft works.
