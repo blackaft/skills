@@ -16,11 +16,15 @@ Copy and paste the following prompt to your agent:
 TBD
 ```
 
-Extras:
+### Using the aft
 
-- To manage your vaults, simply prompt your agent to update/delete a Blackaft vault.
-- To understand how it works, prompt your agent to onboard you.
-- To customise any part of the process, you guessed it: prompt you agent.
+Prompt your agent:
+
+- To add/update/delete a specific Blackaft vault.
+- To see a vault.
+- To publish a vault.
+- To understand how the aft works.
+- To customise any part of it.
 
 ## Optional extras
 
