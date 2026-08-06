@@ -18,13 +18,13 @@ TBD
 
 ### Using the aft
 
-Prompt your agent:
+Prompt your agent to:
 
-- To add/update/delete a specific Blackaft vault.
-- To see a vault.
-- To publish a vault.
-- To understand how the aft works.
-- To customise any part of it.
+- Add/update/delete a specific Blackaft vault.
+- See a vault.
+- Publish a vault.
+- Understand how the aft works.
+- Customise any part of it.
 
 ## Optional extras
 
