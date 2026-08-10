@@ -34,7 +34,7 @@ Blackaft glossary:
 - Specificity: Blackaft extensively uses and follows Project Management and Product Engineering terms and norms to ensure maximum alignment across different AI setups based on standardised methodologies.
 - Efficiency: All of Blackaft's skills, resources and tools offer `index.json` files that act as lightweight manifests meant to be ingested by AI agents as deterministic structures, instead of probabilistically scanning for directories/files.
 - Efficiency: All repeatable and predictable steps in workflows rely on CLIs and pre-packaged deterministic scripts (.py, .sh, gh, etc.).
-- Maturity: All resources are offered through standardised `openapi.yml` requests.
+- Maturity: All resources are offered through standardised `openapi.yml` schemas.
 
 ## Conditionals
 
