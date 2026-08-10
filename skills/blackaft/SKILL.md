@@ -15,9 +15,9 @@ Blackaft glossary:
 
 | Name | Summary | Required Skills | SaS Extensions |
 | --- | --- | --- | --- |
-| MCP | Currently not available | - | - |
-| CLI | Not available | - | - |
-| SDK | Not available | - | - |
+| MCP | Not currently exposed | - | - |
+| CLI | No public interface | - | - |
+| SDK | No public interface | - | - |
 | Contributing | Blackaft issues/commits/PRs | - | - |
 | Training | AI agents as instructors | - | afts/academy |
 | Storytelling | Text-to-script, short-form & AV content | storytelling | afts/studio |
@@ -35,7 +35,7 @@ Blackaft glossary:
 - Efficiency: 
   - All of Blackaft's skills, resources and tools offer `index.json` files that act as lightweight manifests meant to be ingested by AI agents as deterministic structures, instead of probabilistically scanning for directories/files.
   - All repeatable and predictable steps in workflows rely on CLIs and pre-packaged deterministic scripts (.py, .sh, gh, etc.).
-- Compatibility: All JSON files follow the JSON-RPC 2.0 / MCP and OpenAPI specifications (incl. resources via .yml).
+- Compatibility: Interfaces use established specifications such as JSON-RPC 2.0, MCP and OpenAPI where applicable, with lightweight extensions for execution and dependency metadata.
 
 ## Conditionals
 

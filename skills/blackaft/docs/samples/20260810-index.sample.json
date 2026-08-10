@@ -1,0 +1,287 @@
+{
+  "jsonrpc": "2.0",
+  "id": "blackaft-manifest-v1",
+  "result": {
+    "serverInfo": {
+      "name": "blackaft",
+      "version": "1.0.0",
+      "description": "Blackaft ecosystem interface for AI agents"
+    },
+    "capabilities": {
+      "prompts": {},
+      "tools": {},
+      "resources": {}
+    },
+    "prompts": [
+      {
+        "name": "contributing_meta",
+        "description": "System meta-prompt for Blackaft issue management, commit conventions, and pull requests.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Contributing Agent. Enforce standard git conventions, structured issue logging, and clean commit/PR workflows following repository standards."
+      },
+      {
+        "name": "training_meta",
+        "description": "System meta-prompt for AI agents acting as instructors and mentors.",
+        "arguments": [
+          {
+            "name": "topic",
+            "description": "Domain or subject area for instruction",
+            "required": false
+          }
+        ],
+        "prompt": "You are the Blackaft Training Instructor Agent (afts/academy). Structure interactive, step-by-step technical training, evaluate skill mastery, and provide deterministic feedback loops."
+      },
+      {
+        "name": "storytelling_meta",
+        "description": "System meta-prompt for converting text into scripted short-form posts and audiovisual material.",
+        "arguments": [
+          {
+            "name": "format",
+            "description": "Target script output format (e.g. video, thread, storyboard)",
+            "required": false
+          }
+        ],
+        "prompt": "You are the Blackaft Storytelling Agent (afts/studio). Ingest unstructured text and convert it into high-impact, formatted scripts, voiceover cues, and audiovisual visual directives."
+      },
+      {
+        "name": "vaulting_meta",
+        "description": "System meta-prompt for portable resource lifecycle management across local and remote environments.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Vaulting Agent. Manage resource bundles, handle synchronization between local and remote stores, and enforce strict vault packaging structures."
+      },
+      {
+        "name": "hosting_meta",
+        "description": "System meta-prompt for bootstrapping local execution stacks and CLI harnesses.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Hosting Agent (afts/app). Environmentally isolate, bootstrap, and initialize multi-stack language execution contexts cleanly."
+      },
+      {
+        "name": "tasks_meta",
+        "description": "System meta-prompt for gamified and deterministic task management.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Tasks Agent. Track, assign, and quantify progress across multi-agent workspace tasks using gamified progression metrics."
+      },
+      {
+        "name": "billables_meta",
+        "description": "System meta-prompt for accounting operations, P&Ls, cash flows, and client statements.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Billables Agent (afts/billables). Enforce rigorous double-entry bookkeeping norms, compute financial statements, track AP/AR, and produce audit-ready financial summaries."
+      },
+      {
+        "name": "project_meta",
+        "description": "System meta-prompt for technical project management and operations.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Project Management Agent (afts/pmo). Enforce milestone tracking, risk logs, agile work breakdowns, and cross-functional task dependencies."
+      },
+      {
+        "name": "product_meta",
+        "description": "System meta-prompt for product strategy, engineering, and user-centric design.",
+        "arguments": [],
+        "prompt": "You are the Blackaft Product Agent (afts/product). Drive specs, feature roadmaps, engineering constraints, and design requirements with absolute clarity."
+      },
+      {
+        "name": "companion_meta",
+        "description": "System meta-prompt for navigating private and public resource clusters.",
+        "arguments": [
+          {
+            "name": "cluster_id",
+            "description": "Target vault or resource cluster name",
+            "required": true
+          }
+        ],
+        "prompt": "You are a Blackaft Companion Agent. Guide AI agents cleanly through index hierarchies and manifest trees of specified private/public resource vaults without context bloat."
+      }
+    ],
+    "tools": [
+      {
+        "name": "blackaft_contributing",
+        "description": "Manage Blackaft issues, commits, and pull requests",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "enum": ["create_issue", "commit", "pr"] },
+            "title": { "type": "string", "description": "Title or summary message" }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "bin/contribute.sh",
+          "required_skills": [],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_training",
+        "description": "Run AI-driven training and academy modules",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "module": { "type": "string", "description": "Training module or course identifier" }
+          },
+          "required": ["module"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/academy/bin/run.py",
+          "required_skills": [],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_storytelling",
+        "description": "Process text into scripted material for short-form posts and AV content",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "source_path": { "type": "string", "description": "Path to input file" },
+            "output_format": { "type": "string", "enum": ["script", "storyboard", "thread"] }
+          },
+          "required": ["source_path"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/studio/bin/run.sh",
+          "required_skills": ["storytelling"],
+          "vaults": ["creative"]
+        }
+      },
+      {
+        "name": "blackaft_vaulting",
+        "description": "Manage portable resource lifecycles between local and remote targets",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "enum": ["pack", "unpack", "sync"] },
+            "target": { "type": "string", "description": "Target vault or manifest path" }
+          },
+          "required": ["action", "target"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "bin/vaulting.py",
+          "required_skills": ["vaulting", "localhost"],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_hosting",
+        "description": "Bootstrap local multi-stack environments and CLI harnesses",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "stack": { "type": "string", "description": "Language or environment stack" },
+            "action": { "type": "string", "enum": ["bootstrap", "teardown", "status"] }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/app/bin/host.sh",
+          "required_skills": ["localhost"],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_tasks",
+        "description": "Execute and track gamified task workflows",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "task_id": { "type": "string", "description": "Task reference ID" },
+            "action": { "type": "string", "enum": ["start", "complete", "log"] }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "bin/tasks.py",
+          "required_skills": ["localhost"],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_billables",
+        "description": "Manage P&L, cashflows, AP/AR, and client statements",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "enum": ["statement", "pl_report", "reconcile"] }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/billables/bin/run.py",
+          "required_skills": [],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_project",
+        "description": "Technical project ops and PM tracking",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "enum": ["status", "sprint_plan", "risk_log"] }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/pmo/bin/run.py",
+          "required_skills": [],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_product",
+        "description": "Product management, engineering, and design operations",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "enum": ["spec", "roadmap", "architecture"] }
+          },
+          "required": ["action"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "afts/product/bin/run.py",
+          "required_skills": [],
+          "vaults": []
+        }
+      },
+      {
+        "name": "blackaft_companion",
+        "description": "Navigate private/public resource clusters",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "cluster": { "type": "string", "description": "Resource cluster name or URI" }
+          },
+          "required": ["cluster"]
+        },
+        "_handler": {
+          "type": "cli",
+          "entrypoint": "bin/companion.py",
+          "required_skills": ["companion-{x}"],
+          "vaults": ["vaults-{x}"]
+        }
+      }
+    ],
+    "resources": [
+      {
+        "uri": "blackaft://vaults/creative",
+        "name": "Creative Vault",
+        "mimeType": "application/json",
+        "description": "Private cluster of creative assets and script templates"
+      },
+      {
+        "uri": "blackaft://schemas/openapi.yml",
+        "name": "Blackaft API Schemas",
+        "mimeType": "text/x-yaml",
+        "description": "OpenAPI definitions for Blackaft service interfaces"
+      }
+    ]
+  }
+}
