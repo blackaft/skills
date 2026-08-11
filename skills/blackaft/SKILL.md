@@ -36,7 +36,9 @@ Blackaft glossary:
 - Efficiency: 
   - All of Blackaft's skills, resources and tools offer `index.json` files that act as lightweight manifests meant to be ingested by AI agents as deterministic structures, instead of probabilistically scanning for directories/files.
   - All repeatable and predictable steps in workflows rely on CLIs and pre-packaged deterministic scripts (.py, .sh, gh, etc.).
-- Compatibility: Interfaces use established specifications such as JSON-RPC 2.0, MCP and OpenAPI where applicable, with lightweight extensions for execution and dependency metadata.
+- Compatibility: 
+  - Interfaces use established specifications such as JSON-RPC 2.0, MCP and OpenAPI where applicable, with lightweight extensions for execution and dependency metadata.
+  - Releases follow SemVer (2.0) indicated in YAML Frontmatter.
 
 ## Conditionals
 
