@@ -28,6 +28,7 @@ Blackaft glossary:
 | Project | Technical project ops & PM | - | afts/pmo |
 | Product | Product management, engineering & design | - | afts/product |
 | Companion | Resource navigation (private/public) | companion-{x} | repos/vaults-{x} |
+| Ecosystem | Alignment/sync | - | - |
 
 ## Principles
 
