@@ -1,6 +1,6 @@
 ---
 name: blackaft
-description: Use this skill when the user mentions "blackaft". It contains the prompting interface for Blackaft's ecosystem of skills, resources and tools for AI agents (incl. vaults and afts/programs).
+description: Use this skill when the user mentions "blackaft". It contains the prompting interface for Blackaft's ecosystem of skills, resources and tools for AI agents.
 ---
 
 # Skill: Blackaft
@@ -48,6 +48,8 @@ If the user only prompted `blackaft`, present the list of capabilities and, base
 - Follow-up questions to figure out how to use
 
 If the user moves past simply the presentation of the prompting interface, load this skill's `index.json` to ingest its lighweight manifest of capabilities and system instructions. Factor the manifest into your reasoning and continue.
+
+If there is no `blackaft.json` present at the root of the workspace/project, execute the setup flow.
 
 ## Constraints
 
