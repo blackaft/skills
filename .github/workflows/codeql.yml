@@ -21,7 +21,7 @@ jobs:
       matrix: ${{ steps.languages.outputs.matrix }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build supported-language matrix
         id: languages
@@ -50,7 +50,7 @@ jobs:
         include: ${{ fromJSON(needs.detect.outputs.matrix) }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
