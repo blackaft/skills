@@ -1,0 +1,42 @@
+# Local agent and human workspace data
+.agents/*
+!.agents/skills/
+!.agents/skills/.gitkeep
+.humans/*
+!.gitkeep
+skills-lock.json
+
+# OS, Editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Node, JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Envs
+.env
+.env.*
+!.env.example
+coverage/
+dist/
+build/
+tmp/
+temp/
