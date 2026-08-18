@@ -40,6 +40,5 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Skills: Blackhost
-skills/blackhost/local/index.json
-skills/blackhost/local/index.html
+skills/blackhost/local/*
 skills/blackhost/assurance/log.txt
