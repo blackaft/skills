@@ -1,0 +1,232 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Docker host checks, app scaffolding, local app runs, installation, updates, and diagnostics.",
+    "modules_dir": "scripts/docker/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Docker common helpers for CLI availability, daemon reachability, Compose, Buildx, host guidance, and daemon waiting.",
+            "functions": [
+                "blackhost_docker_cli_available",
+                "blackhost_docker_daemon_reachable",
+                "blackhost_docker_compose_available",
+                "blackhost_docker_buildx_available",
+                "blackhost_docker_print_host_guidance",
+                "blackhost_docker_print_compose_version",
+                "blackhost_docker_print_buildx_version",
+                "blackhost_docker_wait_for_daemon"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Docker readiness command implementation.",
+            "functions": [
+                "blackhost_docker_check_help",
+                "blackhost_docker_check"
+            ]
+        },
+        "dockerise": {
+            "path": "dockerise.sh",
+            "summary": "Docker scaffold command implementation for target app directories.",
+            "functions": [
+                "blackhost_docker_dockerise_help",
+                "blackhost_docker_dockerise",
+                "blackhost_dockerise_help",
+                "blackhost_dockerise",
+                "blackhost_dockerise_find_composer_dir",
+                "blackhost_dockerise_detect_type",
+                "blackhost_dockerise_check_writable",
+                "blackhost_dockerise_preflight_php_apache",
+                "blackhost_dockerise_preflight_static_nginx",
+                "blackhost_dockerise_write_file",
+                "blackhost_dockerise_write_php_apache",
+                "blackhost_dockerise_write_php_dockerfile",
+                "blackhost_dockerise_write_static_nginx",
+                "blackhost_dockerise_write_common_dockerignore"
+            ]
+        },
+        "run": {
+            "path": "run.sh",
+            "summary": "Docker local app build/run/open command implementation.",
+            "functions": [
+                "blackhost_docker_run_help",
+                "blackhost_docker_run"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Docker installation command implementation.",
+            "functions": [
+                "blackhost_docker_install_help",
+                "blackhost_docker_install",
+                "blackhost_docker_install_macos",
+                "blackhost_docker_install_linux"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Docker update command implementation.",
+            "functions": [
+                "blackhost_docker_update_help",
+                "blackhost_docker_update",
+                "blackhost_docker_update_macos",
+                "blackhost_docker_update_linux",
+                "blackhost_docker_update_diagnostics",
+                "blackhost_docker_update_prune"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] docker check [--yes] [--verbose]",
+            "summary": "Checks Docker CLI, daemon reachability, Compose v2 or legacy docker-compose, Buildx, runtime smoke via hello-world, and Docker disk usage.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print docker info when the daemon is reachable.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "Docker CLI is missing.",
+                "Docker daemon is unavailable.",
+                "Docker Compose is unavailable.",
+                "Docker Buildx is unavailable."
+            ]
+        },
+        "dockerise": {
+            "run": "scripts/core/init.sh [--json] docker dockerise <target-dir> [--type auto|php-apache|static-nginx] [--port 8080] [--force] [--dry-run] [--yes]",
+            "summary": "Scaffolds Docker deployment files for a target PHP/Apache or static/nginx app directory.",
+            "options": {
+                "--type": "Select scaffold type: auto, php-apache, or static-nginx.",
+                "--port": "Set the generated container port. Defaults to 8080.",
+                "--force": "Allow overwriting generated files that already exist.",
+                "--dry-run": "Print planned file writes without writing files.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "mutates_workspace": true,
+            "expected_failure_when": [
+                "Target directory is missing.",
+                "Scaffold type cannot be detected and --type was not provided.",
+                "A generated file already exists and --force was not provided."
+            ]
+        },
+        "run": {
+            "run": "scripts/core/init.sh [--json] docker run <target-dir> [--port 8080] [--container-port 8080] [--image NAME] [--name NAME] [--no-build] [--open] [--dry-run] [--yes]",
+            "summary": "Builds and runs a Dockerised app locally, maps it to localhost, and optionally opens the browser.",
+            "options": {
+                "--port": "Local browser port. Defaults to 8080.",
+                "--container-port": "Container port exposed by the app. Defaults to the first Dockerfile EXPOSE value, then 8080.",
+                "--image": "Docker image tag. Defaults to blackhost-<target-dir-name>.",
+                "--name": "Container name. Defaults to the image tag.",
+                "--no-build": "Skip docker build and run the existing image tag.",
+                "--open": "Open http://localhost:<port> after the container starts.",
+                "--dry-run": "Print build, replace, run, and browser-open commands without executing them.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Target directory is missing.",
+                "Target directory has no Dockerfile.",
+                "Docker daemon is unavailable outside dry-run.",
+                "A matching container exists and replacement is declined."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] docker install [--dry-run] [--yes]",
+            "summary": "Installs Docker tooling with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if Docker is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Installs Docker Desktop through Homebrew cask, then optionally opens Docker Desktop.",
+                "debian_like_linux": "Installs Docker Engine, Docker CLI, containerd, Buildx plugin, and Compose plugin through Docker's apt repository."
+            }
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] docker update [--dry-run] [--yes] [--prune]",
+            "summary": "Updates Docker tooling with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if Docker is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--prune": "Prompt to run docker system prune after update.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Updates Docker Desktop through Homebrew cask.",
+                "debian_like_linux": "Updates Docker Engine, Docker CLI, containerd, Buildx plugin, and Compose plugin through apt."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] docker check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] docker dockerise <target-dir> [--type auto|php-apache|static-nginx] [--port 8080] [--force] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] docker run <target-dir> [--port 8080] [--container-port 8080] [--image NAME] [--name NAME] [--no-build] [--open] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] docker install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] docker update [--dry-run] [--yes] [--prune]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "mktemp",
+            "sed",
+            "cat",
+            "awk",
+            "basename",
+            "tr",
+            "grep"
+        ],
+        "optional": [
+            "docker",
+            "docker compose",
+            "docker-compose",
+            "docker buildx",
+            "xdg-open"
+        ],
+        "macos": [
+            "brew",
+            "open"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "curl",
+            "gpg",
+            "dpkg",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is non-mutating except for Docker's hello-world pull when Docker is reachable.",
+            "dockerise is host-read-only but may write Docker scaffold files inside the target workspace directory.",
+            "run may build images, replace same-name containers after confirmation, start a local container, and optionally open a browser.",
+            "run supports --dry-run where Docker and browser-open commands are printed but not executed.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install and update support --dry-run where detected host command paths are printed but not executed.",
+            "dry-run must not short-circuit just because Docker is already installed or currently missing.",
+            "update --prune may remove unused Docker objects after explicit confirmation."
+        ]
+    },
+    "notes": []
+}

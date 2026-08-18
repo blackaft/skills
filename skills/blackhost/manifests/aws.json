@@ -1,0 +1,176 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "AWS CLI checks, installation, updates, and SSO browser authentication.",
+    "modules_dir": "scripts/aws/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "AWS CLI common helpers for CLI availability, version output, caller identity checks, and identity diagnostics.",
+            "functions": [
+                "blackhost_aws_cli_available",
+                "blackhost_aws_print_version",
+                "blackhost_aws_identity_available",
+                "blackhost_aws_print_identity"
+            ]
+        },
+        "auth": {
+            "path": "auth.sh",
+            "summary": "AWS SSO browser authentication command implementation.",
+            "functions": [
+                "blackhost_aws_auth_help",
+                "blackhost_aws_auth"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "AWS CLI readiness command implementation.",
+            "functions": [
+                "blackhost_aws_check_help",
+                "blackhost_aws_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "AWS CLI v2 installation command implementation.",
+            "functions": [
+                "blackhost_aws_install_help",
+                "blackhost_aws_install",
+                "blackhost_aws_install_unix"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "AWS CLI v2 update command implementation.",
+            "functions": [
+                "blackhost_aws_update_help",
+                "blackhost_aws_update"
+            ]
+        }
+    },
+    "commands": {
+        "auth": {
+            "run": "scripts/core/init.sh [--json] aws auth [--profile default] [--configure] [--dry-run] [--yes]",
+            "summary": "Starts AWS SSO browser authentication or SSO profile configuration and validates caller identity when possible.",
+            "options": {
+                "--profile": "AWS profile to authenticate. Defaults to default.",
+                "--configure": "Run aws configure sso instead of aws sso login.",
+                "--dry-run": "Print the AWS SSO command without executing it.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "AWS CLI is missing outside dry-run.",
+                "The selected profile is not configured for SSO.",
+                "The user does not complete browser validation.",
+                "AWS CLI still cannot resolve caller identity after login."
+            ]
+        },
+        "check": {
+            "run": "scripts/core/init.sh [--json] aws check [--profile default] [--yes] [--verbose]",
+            "summary": "Checks AWS CLI availability and caller identity resolution for a profile.",
+            "options": {
+                "--profile": "AWS profile to inspect. Defaults to default.",
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print AWS CLI configuration details when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "AWS CLI is missing.",
+                "AWS CLI cannot resolve caller identity for the selected profile."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] aws install [--dry-run] [--yes]",
+            "summary": "Installs AWS CLI v2 with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the official AWS CLI v2 install command without executing it, even if AWS CLI is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Runs the official AWS CLI v2 install script for the current user.",
+                "linux": "Runs the official AWS CLI v2 install script for the current user."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "curl is missing.",
+                "The user declines the install prompt.",
+                "The AWS CLI install script fails."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] aws update [--dry-run] [--yes]",
+            "summary": "Updates AWS CLI v2 with explicit prompts.",
+            "options": {
+                "--dry-run": "Print aws update without executing it, even if AWS CLI is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Runs aws update.",
+                "linux": "Runs aws update."
+            },
+            "expected_failure_when": [
+                "AWS CLI is missing outside dry-run.",
+                "The user declines the update prompt.",
+                "The AWS CLI update command fails."
+            ]
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] aws auth [--profile default] [--configure] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] aws check [--profile default] [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] aws install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] aws update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat"
+        ],
+        "optional": [
+            "aws",
+            "curl"
+        ],
+        "macos": [
+            "curl for install"
+        ],
+        "linux": [
+            "curl for install"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install, update, or authenticate AWS CLI.",
+            "auth mutates AWS CLI SSO credential cache or configuration and requires the user to complete browser validation.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install, update, and auth support --dry-run where command paths are printed but not executed.",
+            "dry-run must not short-circuit just because AWS CLI is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "No run command is currently defined because AWS CLI does not expose a durable local app process for this skill."
+    ]
+}

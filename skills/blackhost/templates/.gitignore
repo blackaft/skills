@@ -1,0 +1,11 @@
+# Generated per-user blackhost state
+/local/index.json
+/local/index.html
+/local/index-server.pid
+/local/index-server.log
+/local/.venv/
+/assurance/log.txt
+
+# Local run state
+*.pid
+*.log

@@ -1,0 +1,181 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Google Cloud CLI checks, installation, updates, and browser-based authentication.",
+    "modules_dir": "scripts/gcloud/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Google Cloud CLI common helpers for CLI availability, version output, active account detection, auth status, and config diagnostics.",
+            "functions": [
+                "blackhost_gcloud_cli_available",
+                "blackhost_gcloud_print_version",
+                "blackhost_gcloud_active_account",
+                "blackhost_gcloud_auth_available",
+                "blackhost_gcloud_print_auth_status",
+                "blackhost_gcloud_print_config"
+            ]
+        },
+        "auth": {
+            "path": "auth.sh",
+            "summary": "Google Cloud CLI browser authentication command implementation.",
+            "functions": [
+                "blackhost_gcloud_auth_help",
+                "blackhost_gcloud_auth"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Google Cloud CLI readiness command implementation.",
+            "functions": [
+                "blackhost_gcloud_check_help",
+                "blackhost_gcloud_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Google Cloud CLI installation command implementation.",
+            "functions": [
+                "blackhost_gcloud_install_help",
+                "blackhost_gcloud_install",
+                "blackhost_gcloud_install_macos",
+                "blackhost_gcloud_install_linux"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Google Cloud CLI update command implementation.",
+            "functions": [
+                "blackhost_gcloud_update_help",
+                "blackhost_gcloud_update",
+                "blackhost_gcloud_update_macos",
+                "blackhost_gcloud_update_linux"
+            ]
+        }
+    },
+    "commands": {
+        "auth": {
+            "run": "scripts/core/init.sh [--json] gcloud auth [--dry-run] [--yes]",
+            "summary": "Starts browser-based Google Cloud CLI authentication and validates active account state.",
+            "options": {
+                "--dry-run": "Print the browser auth command without executing it.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Google Cloud CLI is missing outside dry-run.",
+                "The user does not complete browser validation.",
+                "Google Cloud CLI still reports no active account after login."
+            ]
+        },
+        "check": {
+            "run": "scripts/core/init.sh [--json] gcloud check [--yes] [--verbose]",
+            "summary": "Checks Google Cloud CLI availability and active authentication status.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print gcloud configuration details when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Google Cloud CLI is missing.",
+                "Google Cloud CLI has no active account."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] gcloud install [--dry-run] [--yes]",
+            "summary": "Installs Google Cloud CLI with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if Google Cloud CLI is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Installs google-cloud-sdk through Homebrew.",
+                "debian_like_linux": "Configures Google's apt repository and installs google-cloud-cli through apt."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "The package manager or required command is missing.",
+                "The user declines the install prompt.",
+                "The package-manager install command fails."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] gcloud update [--dry-run] [--yes]",
+            "summary": "Updates Google Cloud CLI with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if Google Cloud CLI is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Updates google-cloud-sdk through Homebrew.",
+                "debian_like_linux": "Upgrades google-cloud-cli through apt."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "The package manager or required command is missing.",
+                "Google Cloud CLI is missing outside dry-run.",
+                "The user declines the update prompt.",
+                "The package-manager update command fails."
+            ]
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] gcloud auth [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] gcloud check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] gcloud install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] gcloud update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat"
+        ],
+        "optional": [
+            "gcloud"
+        ],
+        "macos": [
+            "brew"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "curl",
+            "gpg",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install, update, or authenticate Google Cloud CLI.",
+            "auth mutates Google Cloud CLI credential state and requires the user to complete browser validation.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install, update, and auth support --dry-run where command paths are printed but not executed.",
+            "dry-run must not short-circuit just because Google Cloud CLI is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "No run command is currently defined because Google Cloud CLI does not expose a durable local app process for this skill."
+    ]
+}

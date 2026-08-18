@@ -1,0 +1,160 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "PyYAML checks, managed virtualenv installation, updates, and YAML parse runs for Python-backed tooling.",
+    "modules_dir": "scripts/yaml/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "YAML common helpers for python3, blackhost-managed virtualenv, pip, and PyYAML availability and version checks.",
+            "functions": [
+                "blackhost_yaml_python_available",
+                "blackhost_yaml_python_bin",
+                "blackhost_yaml_pip_available",
+                "blackhost_yaml_pyyaml_available",
+                "blackhost_yaml_print_python_version",
+                "blackhost_yaml_print_pip_version",
+                "blackhost_yaml_print_pyyaml_version"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "PyYAML readiness command implementation.",
+            "functions": [
+                "blackhost_yaml_check_help",
+                "blackhost_yaml_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "PyYAML installation command implementation.",
+            "functions": [
+                "blackhost_yaml_install_help",
+                "blackhost_yaml_install"
+            ]
+        },
+        "run": {
+            "path": "run.sh",
+            "summary": "YAML parse command implementation using PyYAML.",
+            "functions": [
+                "blackhost_yaml_run_help",
+                "blackhost_yaml_run"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "PyYAML update command implementation.",
+            "functions": [
+                "blackhost_yaml_update_help",
+                "blackhost_yaml_update"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] yaml check [--yes] [--verbose]",
+            "summary": "Checks python3, pip, and PyYAML import readiness.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print PyYAML import details when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "Python 3 is missing.",
+                "pip is missing or unavailable through python3 -m pip.",
+                "PyYAML is missing or cannot be imported."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] yaml install [--dry-run] [--yes]",
+            "summary": "Installs PyYAML into the blackhost-managed virtualenv with explicit prompts.",
+            "options": {
+                "--dry-run": "Print python3 -m venv and managed-venv pip install commands without executing them, even if PyYAML is already installed or Python is missing.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": true,
+            "supported_hosts": {
+                "macos": "Creates local/.venv under the blackhost skill and installs PyYAML through that environment's pip.",
+                "debian_like_linux": "Creates local/.venv under the blackhost skill and installs PyYAML through that environment's pip."
+            }
+        },
+        "run": {
+            "run": "scripts/core/init.sh [--json] yaml run <yaml-file> [--dry-run] [--yes]",
+            "summary": "Parses a YAML file with PyYAML to confirm the active Python environment can load it.",
+            "options": {
+                "--dry-run": "Print the PyYAML parse command without parsing the file.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "YAML file is missing.",
+                "PyYAML is missing outside dry-run.",
+                "The file is not valid YAML."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] yaml update [--dry-run] [--yes]",
+            "summary": "Updates PyYAML in the blackhost-managed virtualenv with explicit prompts.",
+            "options": {
+                "--dry-run": "Print python3 -m venv and managed-venv pip update commands without executing them, even if PyYAML is missing or Python is missing.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": true,
+            "supported_hosts": {
+                "macos": "Creates or reuses local/.venv under the blackhost skill and updates PyYAML through that environment's pip.",
+                "debian_like_linux": "Creates or reuses local/.venv under the blackhost skill and updates PyYAML through that environment's pip."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] yaml check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] yaml install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] yaml run <yaml-file> [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] yaml update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat",
+            "python3",
+            "python3 -m venv"
+        ],
+        "optional": [
+            "PyYAML",
+            "local/.venv/bin/python"
+        ],
+        "macos": [],
+        "debian_like_linux": [],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check and run are host-read-only.",
+            "install and update create or change the blackhost-managed local/.venv and prompt unless --yes is provided.",
+            "install and update support --dry-run where pip command paths are printed but not executed.",
+            "dry-run must not short-circuit just because PyYAML is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "This package exists to make YAML-backed development tools, including skill validation, deterministic for future agents."
+    ]
+}

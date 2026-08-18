@@ -1,0 +1,84 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "<Short package capability summary.>",
+    "modules_dir": "scripts/<package>/",
+    "modules": {
+        "auth": {
+            "path": "auth.sh",
+            "summary": "<Browser-based authentication module, when the package needs one.>",
+            "exports": [],
+            "configuration": [],
+            "functions": [
+                "blackhost_<package>_auth_help",
+                "blackhost_<package>_auth"
+            ]
+        },
+        "<module>": {
+            "path": "<module>.sh",
+            "summary": "<What this module owns.>",
+            "exports": [],
+            "configuration": [],
+            "functions": [
+                "blackhost_<package>_<function>"
+            ]
+        }
+    },
+    "commands": {
+        "auth": {
+            "run": "scripts/core/init.sh [--json] <package> auth [--dry-run] [--yes]",
+            "summary": "<Starts browser-based authentication for this package.>",
+            "options": {
+                "--dry-run": "Print authentication commands without executing them.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "outputs": [],
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {},
+            "expected_failure_when": []
+        },
+        "<command>": {
+            "run": "scripts/core/init.sh [--json] <package> <command> [options]",
+            "summary": "<What this command does.>",
+            "options": {
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "outputs": [],
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "supported_hosts": {},
+            "expected_failure_when": []
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] <package> <command> [options]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname"
+        ],
+        "optional": [],
+        "macos": [],
+        "debian_like_linux": [],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "Commands that mutate the host must prompt unless explicitly run with --yes.",
+            "Commands that support dry-run must print detected host command paths without executing them.",
+            "dry-run must not short-circuit just because target tooling is already installed or currently missing."
+        ]
+    },
+    "notes": []
+}

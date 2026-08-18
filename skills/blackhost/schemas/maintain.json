@@ -1,0 +1,131 @@
+{
+    "schema": {
+        "name": "blackhost.maintain",
+        "version": "0.1.0"
+    },
+    "summary": "Deterministic maintenance process for changing the blackhost skill.",
+    "entrypoint": "SKILL.md",
+    "process": [
+        {
+            "step": 1,
+            "id": "read_contracts",
+            "action": "Read SKILL.md, skill.json, schemas/maintain.json, schemas/eval.json, and every package manifest affected by the requested change.",
+            "passes_when": "The agent can name the affected commands, modules, manifests, schemas, templates, generated local index artifacts, and assurance checks before editing."
+        },
+        {
+            "step": 2,
+            "id": "edit_runtime",
+            "action": "Update runtime scripts first, preserving scripts/core/init.sh as the only public CLI entrypoint.",
+            "passes_when": "Commands route through scripts/core/init.sh and package implementation functions follow blackhost_<package>_<command> naming."
+        },
+        {
+            "step": 3,
+            "id": "edit_version",
+            "action": "Update VERSION and add a matching CHANGELOG.md row whenever a change intentionally alters skill behavior, public package capability, routing, schemas, templates, assurance, licensing, or generated-state contracts. Use semantic versioning with optional prerelease suffixes.",
+            "passes_when": "VERSION exists, contains exactly one semantic version string such as 1.0.0-beta, CHANGELOG.md has one row for that version, and the row includes Version, User, LLM, and a summary of 240 characters or fewer."
+        },
+        {
+            "step": 4,
+            "id": "edit_contracts",
+            "action": "Update manifests, skill.json, SKILL.md frontmatter and capability table, schemas/skill.openapi.yml tags/enums/paths/request schemas, templates, and local index metadata to match the runtime change.",
+            "passes_when": "No public command, module filename, package name, safety rule, option, generated state artifact, or observable package tool exists in scripts without matching documentation, manifest metadata, and OpenAPI projection."
+        },
+        {
+            "step": 5,
+            "id": "edit_assurance",
+            "action": "Update schemas/eval.json and assurance scripts when behavior, routing, packages, options, or maintenance rules change.",
+            "passes_when": "assurance/eval.sh exercises the changed deterministic behavior directly or delegates to a focused assurance script."
+        },
+        {
+            "step": 6,
+            "id": "run_assurance",
+            "action": "Run assurance/eval.sh from the repository root.",
+            "passes_when": "The script exits 0 and reports all checks as passing."
+        }
+    ],
+    "package_change_loop": [
+        "Start from templates/manifest.json and templates/scripts/*.sh.",
+        "Create or update scripts/<package>/commons.sh for shared package helpers.",
+        "Create or update scripts/<package>/<command>.sh for command modules.",
+        "Expose command functions as blackhost_<package>_<command> and help functions as blackhost_<package>_<command>_help.",
+        "Add scripts/<package>/run.sh when the package normally owns local app execution or browser-opening workflows; otherwise record why run is intentionally absent in manifests/<package>.json notes.",
+        "Declare every public command in manifests/<package>.json.",
+        "Keep manifests/<package>.json formatted and complete, not compressed into a minimal single-line manifest.",
+        "Declare host and workspace mutation boundaries for every command.",
+        "Declare --dry-run semantics for commands that preview host or workspace mutation.",
+        "Declare --json support for command result output.",
+        "Update scripts/core/helpers/index.sh and templates/index.json when the package exposes observable local tools, versions, authentication state, or generated status that should appear in local/index.json and local/index.html.",
+        "Update templates/.gitignore when new generated per-user artifacts are added.",
+        "Update VERSION according to semantic versioning when behavior or public contracts change.",
+        "Update CHANGELOG.md with one row for the current VERSION, User, LLM, and a summary of 240 characters or fewer.",
+        "Update skill.json file references and summaries.",
+        "Update SKILL.md YAML frontmatter description, Mermaid package nodes, and capability/meta-prompt table.",
+        "Update manifests/core.json package list and routing package grammar.",
+        "Update schemas/skill.openapi.yml tags, manifest list, /manifests/{manifestName} enum, package operation paths, request schemas, x-blackhost manifest map, and x-blackhost filesystem map.",
+        "Update schemas/eval.json route smoke commands, static deterministic checks, local index assertions, and OpenAPI coverage assertions.",
+        "Update assurance/eval.sh and assurance/dry.sh so the new behavior can be checked without interpretation.",
+        "Run a routed command that regenerates local/index.json and local/index.html, then assert the package appears in both generated local artifacts when local index support is expected."
+    ],
+    "package_completion_matrix": {
+        "runtime": [
+            "scripts/<package>/commons.sh",
+            "scripts/<package>/check.sh",
+            "scripts/<package>/install.sh when host installation is supported",
+            "scripts/<package>/update.sh when host update is supported",
+            "scripts/<package>/run.sh when local app execution is supported",
+            "scripts/<package>/auth.sh when browser or account authentication is supported"
+        ],
+        "contracts": [
+            "manifests/<package>.json",
+            "manifests/core.json",
+            "skill.json",
+            "VERSION",
+            "CHANGELOG.md",
+            "SKILL.md frontmatter description",
+            "SKILL.md Mermaid diagram",
+            "SKILL.md capability/meta-prompt table",
+            "schemas/skill.openapi.yml tag, manifest enum, operation paths, request schemas, x-blackhost manifests, and filesystem map",
+            "templates/index.json and scripts/core/helpers/index.sh when observable local status exists"
+        ],
+        "assurance": [
+            "schemas/eval.json static validation commands",
+            "schemas/eval.json route smoke commands",
+            "schemas/eval.json OpenAPI coverage checks",
+            "schemas/eval.json local index package checks when applicable",
+            "assurance/eval.sh route smoke checks",
+            "assurance/dry.sh dry-run behavior checks for every supported mutating or app-run command"
+        ]
+    },
+    "routing_contract": {
+        "entrypoint": "scripts/core/init.sh",
+        "package_directory": "scripts/<package>/",
+        "shared_package_module": "scripts/<package>/commons.sh",
+        "command_module": "scripts/<package>/<command>.sh",
+        "function_name": "blackhost_<package>_<command>",
+        "help_function_name": "blackhost_<package>_<command>_help",
+        "package_discovery": "Package names are discovered from scripts/* directories excluding scripts/core.",
+        "command_discovery": "Command names are discovered from scripts/<package>/*.sh excluding commons.sh.",
+        "manual_router_edits": "Do not add package-specific case blocks to scripts/core/helpers/run.sh unless a command cannot follow the standard function naming contract."
+    },
+    "output_contract": {
+        "terminal": "Default output is human-readable terminal messaging.",
+        "json": "--json appends one compact JSON result line with package, command, exit_code, status, dry_run, os, os_id, os_pretty, and arch.",
+        "dry_run": "Supported dry-run commands must print the detected host or workspace command path without executing it, including when tooling is already installed or currently missing."
+    },
+    "local_index_contract": {
+        "template": "templates/index.json",
+        "generated_json": "local/index.json",
+        "generated_html": "local/index.html",
+        "write_policy": "Generated local index files are overwritten after each routed blackhost command.",
+        "open_policy": "Every routed command starts or reuses the local status server and triggers the system default browser for local/index.html unless BLACKHOST_OPEN_INDEX=false is set for automation.",
+        "purpose": "Allow agents to inspect recent local host state, last command output, and raw assurance/log.txt output before deciding whether to rerun checks."
+    },
+    "assurance": {
+        "root": "assurance/",
+        "eval": "assurance/eval.sh",
+        "dry_run": "assurance/dry.sh",
+        "log": "assurance/log.txt",
+        "log_policy": "The log is overwritten on each direct dry.sh or eval.sh run.",
+        "required_before_completion": true
+    }
+}

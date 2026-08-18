@@ -1,0 +1,177 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Python 3, pip, virtual environment support, local static app runs, installation, updates, and diagnostics.",
+    "modules_dir": "scripts/python/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Python and pip common helpers for CLI availability, pip, venv, executable details, and module checks.",
+            "functions": [
+                "blackhost_python_cli_available",
+                "blackhost_python_pip_available",
+                "blackhost_python_venv_available",
+                "blackhost_python_print_version",
+                "blackhost_python_print_pip_version",
+                "blackhost_python_print_executable",
+                "blackhost_python_print_module_checks"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Python and pip readiness command implementation.",
+            "functions": [
+                "blackhost_python_check_help",
+                "blackhost_python_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Python and pip installation command implementation.",
+            "functions": [
+                "blackhost_python_install_help",
+                "blackhost_python_install",
+                "blackhost_python_install_macos",
+                "blackhost_python_install_linux",
+                "blackhost_python_install_diagnostics"
+            ]
+        },
+        "run": {
+            "path": "run.sh",
+            "summary": "Python local static app run command implementation.",
+            "functions": [
+                "blackhost_python_run_help",
+                "blackhost_python_run"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Python and pip update command implementation.",
+            "functions": [
+                "blackhost_python_update_help",
+                "blackhost_python_update",
+                "blackhost_python_update_macos",
+                "blackhost_python_update_linux",
+                "blackhost_python_update_diagnostics"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] python check [--yes] [--verbose]",
+            "summary": "Checks Python 3, pip through python3 -m pip, standard development modules, and inline runtime execution.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print Python executable, site, and pip configuration when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "Python 3 is missing.",
+                "pip is missing or unavailable through python3 -m pip.",
+                "One or more standard development modules are missing.",
+                "Python inline runtime execution fails."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] python install [--dry-run] [--yes]",
+            "summary": "Installs Python 3, pip, virtual environment support, headers, and build tooling with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if Python and pip are already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Installs python through Homebrew; pip is provided by the Homebrew Python formula.",
+                "debian_like_linux": "Installs python3, python3-pip, python3-venv, python3-dev, and build-essential through apt."
+            }
+        },
+        "run": {
+            "run": "scripts/core/init.sh [--json] python run <target-dir> [--host 127.0.0.1] [--port 8000] [--open] [--dry-run] [--yes]",
+            "summary": "Starts a local Python static file server for a target directory and optionally opens it in a browser.",
+            "options": {
+                "--host": "Host interface for python3 -m http.server. Defaults to 127.0.0.1.",
+                "--port": "Local browser port. Defaults to 8000.",
+                "--open": "Open http://<host>:<port> after the server starts.",
+                "--dry-run": "Print server and browser commands without executing them.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Target directory is missing.",
+                "Python 3 is missing outside dry-run.",
+                "A blackhost Python server PID file already points to a running process for the requested port."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] python update [--dry-run] [--yes]",
+            "summary": "Updates Python 3, pip, virtual environment support, headers, and build tooling with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if Python and pip are not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Updates python through Homebrew; pip is provided by the Homebrew Python formula.",
+                "debian_like_linux": "Updates python3, python3-pip, python3-venv, python3-dev, and build-essential through apt."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] python check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] python install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] python run <target-dir> [--host 127.0.0.1] [--port 8000] [--open] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] python update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "mktemp",
+            "sed",
+            "cat",
+            "kill"
+        ],
+        "optional": [
+            "python3",
+            "python3 -m pip",
+            "python3 -m venv",
+            "open",
+            "xdg-open"
+        ],
+        "macos": [
+            "brew"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install or update Python or pip.",
+            "run starts a local background Python HTTP server process and prints its stop command.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install and update support --dry-run where detected host command paths are printed but not executed.",
+            "dry-run must not short-circuit just because Python and pip are already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "pip is managed as part of the python package because it is Python-specific package management tooling."
+    ]
+}

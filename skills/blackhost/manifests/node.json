@@ -1,0 +1,199 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Node.js, npm, and npx checks, local app runs, installation, updates, and diagnostics.",
+    "modules_dir": "scripts/node/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Node.js common helpers for CLI availability, version output, package script detection, and package script validation.",
+            "functions": [
+                "blackhost_node_cli_available",
+                "blackhost_node_npm_available",
+                "blackhost_node_npx_available",
+                "blackhost_node_print_version",
+                "blackhost_node_print_npm_version",
+                "blackhost_node_print_npx_version",
+                "blackhost_node_print_executable",
+                "blackhost_node_package_script_exists",
+                "blackhost_node_detect_run_script"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Node.js, npm, and npx readiness command implementation.",
+            "functions": [
+                "blackhost_node_check_help",
+                "blackhost_node_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Node.js, npm, and npx installation command implementation.",
+            "functions": [
+                "blackhost_node_install_help",
+                "blackhost_node_install",
+                "blackhost_node_install_macos",
+                "blackhost_node_install_linux",
+                "blackhost_node_install_diagnostics"
+            ]
+        },
+        "run": {
+            "path": "run.sh",
+            "summary": "Node.js local app package-script run command implementation.",
+            "functions": [
+                "blackhost_node_run_help",
+                "blackhost_node_run"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Node.js, npm, and npx update command implementation.",
+            "functions": [
+                "blackhost_node_update_help",
+                "blackhost_node_update",
+                "blackhost_node_update_macos",
+                "blackhost_node_update_linux",
+                "blackhost_node_update_diagnostics"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] node check [--yes] [--verbose]",
+            "summary": "Checks Node.js, npm, npx, inline runtime execution, and optional npm configuration details.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print Node.js executable paths and npm configuration when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "outputs": [
+                "node",
+                "npm",
+                "npx"
+            ],
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Node.js is missing.",
+                "npm is missing.",
+                "npx is missing.",
+                "Node.js inline runtime execution fails."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] node install [--dry-run] [--yes]",
+            "summary": "Installs Node.js, npm, and npx with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if Node.js, npm, and npx are already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Installs node through Homebrew.",
+                "debian_like_linux": "Installs nodejs and npm through apt."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "The package manager is missing.",
+                "The user declines the install prompt.",
+                "The package-manager install command fails."
+            ]
+        },
+        "run": {
+            "run": "scripts/core/init.sh [--json] node run <target-dir> [--script dev] [--host 127.0.0.1] [--port 5173] [--open] [--dry-run] [--yes]",
+            "summary": "Starts a local Node.js package script for a target app directory and optionally opens it in a browser.",
+            "options": {
+                "--script": "npm script to run. Defaults to the first available dev, start, or serve script.",
+                "--host": "Host argument passed to the npm script after --. Defaults to 127.0.0.1.",
+                "--port": "Port argument passed to the npm script after --. Defaults to 5173.",
+                "--open": "Open http://<host>:<port> after the process starts.",
+                "--dry-run": "Print the npm and browser commands without starting the process.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "The target directory is missing.",
+                "package.json is missing.",
+                "No runnable npm script can be selected.",
+                "npm is missing outside dry-run.",
+                "A blackhost Node.js process is already recorded for the selected port."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] node update [--dry-run] [--yes]",
+            "summary": "Updates Node.js, npm, and npx with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if Node.js is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Updates node through Homebrew.",
+                "debian_like_linux": "Upgrades nodejs and npm through apt."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "The package manager is missing.",
+                "Node.js is missing outside dry-run.",
+                "The user declines the update prompt.",
+                "The package-manager update command fails."
+            ]
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] node <check|install|run|update> [options]"
+        ],
+        "packages": {
+            "node": {
+                "manifest": "manifests/node.json",
+                "run": "scripts/core/init.sh node <check|install|run|update> [options]"
+            }
+        }
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname"
+        ],
+        "optional": [
+            "brew",
+            "apt-get",
+            "node",
+            "npm",
+            "npx",
+            "open",
+            "xdg-open"
+        ],
+        "macos": [
+            "Homebrew for install/update"
+        ],
+        "debian_like_linux": [
+            "apt-get for install/update"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "Check is read-only.",
+            "Install and update prompt unless --yes.",
+            "Run starts a local host process and may open the browser when --open is provided.",
+            "Dry-run prints the detected command path without execution."
+        ]
+    },
+    "notes": []
+}

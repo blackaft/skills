@@ -1,0 +1,133 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Git CLI checks, installation, updates, repository context, and identity diagnostics.",
+    "modules_dir": "scripts/git/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Git common helpers for CLI availability, version output, repository context, and global identity checks.",
+            "functions": [
+                "blackhost_git_cli_available",
+                "blackhost_git_print_version",
+                "blackhost_git_print_repo",
+                "blackhost_git_print_identity"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Git readiness command implementation.",
+            "functions": [
+                "blackhost_git_check_help",
+                "blackhost_git_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Git installation command implementation.",
+            "functions": [
+                "blackhost_git_install_help",
+                "blackhost_git_install",
+                "blackhost_git_install_macos",
+                "blackhost_git_install_linux"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Git update command implementation.",
+            "functions": [
+                "blackhost_git_update_help",
+                "blackhost_git_update",
+                "blackhost_git_update_macos",
+                "blackhost_git_update_linux"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] git check [--yes] [--verbose]",
+            "summary": "Checks Git CLI availability and optional repository/global identity details.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print repository and global identity details when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "Git CLI is missing."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] git install [--dry-run] [--yes]",
+            "summary": "Installs Git with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if Git is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Installs git through Homebrew.",
+                "debian_like_linux": "Installs git through apt."
+            }
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] git update [--dry-run] [--yes]",
+            "summary": "Updates Git with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if Git is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Updates git through Homebrew.",
+                "debian_like_linux": "Updates git through apt."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] git check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] git install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] git update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat"
+        ],
+        "optional": [
+            "git"
+        ],
+        "macos": [
+            "brew"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install or update Git.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install and update support --dry-run where detected host command paths are printed but not executed.",
+            "dry-run must not short-circuit just because Git is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "No run command is currently defined because Git has no durable local app process or browser-open workflow."
+    ]
+}

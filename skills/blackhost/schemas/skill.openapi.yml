@@ -1,0 +1,3069 @@
+---
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Blackhost Skill
+  summary: Local host setup and configuration harness for Blackaft workspaces.
+  description: OpenAPI-style description of the blackhost local CLI surface. Operations are represented as local command invocations through vendor extensions because blackhost is not an HTTP service.
+  version: 0.1.0
+servers:
+- url: blackhost://local
+  description: Local shell execution boundary.
+tags:
+- name: aws
+  description: AWS CLI checks, installation, updates, and SSO browser authentication.
+- name: core
+  description: Root router, host detection, shared helper loading, and package dispatch.
+- name: docker
+  description: Docker host checks, app scaffolding, local app runs, installation, updates, and diagnostics.
+- name: git
+  description: Git CLI checks, installation, updates, repository context, and identity diagnostics.
+- name: gh
+  description: GitHub CLI checks, installation, updates, and browser-based authentication.
+- name: gcloud
+  description: Google Cloud CLI checks, installation, updates, and browser-based authentication.
+- name: homebrew
+  description: Homebrew package-manager checks, installation, updates, and diagnostics.
+- name: php
+  description: PHP CLI, common PHP extensions, Composer checks, local app runs, installation, updates, and diagnostics.
+- name: python
+  description: Python 3, pip, virtual environment support, local static app runs, installation, updates, and diagnostics.
+- name: yaml
+  description: PyYAML checks, managed virtualenv installation, updates, and YAML parse runs for Python-backed tooling.
+- name: node
+  description: Node.js, npm, and npx checks, installation, and updates.
+- name: metadata
+  description: Skill and manifest discovery metadata.
+paths:
+  "/skill":
+    get:
+      tags:
+      - metadata
+      operationId: getBlackhostSkill
+      summary: Read the blackhost skill index.
+      description: Returns the lightweight skill index and file map.
+      x-blackhost-command:
+        entrypoint: null
+        argv: []
+        reads:
+        - skill.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Skill metadata.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SkillIndex"
+  "/manifests":
+    get:
+      tags:
+      - metadata
+      operationId: listBlackhostManifests
+      summary: List known package manifests.
+      x-blackhost-command:
+        entrypoint: null
+        argv: []
+        reads:
+        - manifests/core.json
+        - manifests/docker.json
+        - manifests/git.json
+        - manifests/gh.json
+        - manifests/php.json
+        - manifests/python.json
+        - manifests/yaml.json
+        - manifests/node.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Known manifests.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - manifests
+                properties:
+                  manifests:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ManifestRef"
+  "/eval":
+    get:
+      tags:
+      - metadata
+      operationId: getBlackhostEval
+      summary: Read deterministic blackhost agent checks.
+      description: Returns the rules and checks agents should use when using or updating this skill.
+      x-blackhost-command:
+        entrypoint: null
+        argv: []
+        reads:
+        - schemas/eval.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Eval metadata.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/EvalContract"
+  "/maintain":
+    get:
+      tags:
+      - metadata
+      operationId: getBlackhostMaintain
+      summary: Read deterministic blackhost maintenance process.
+      description: Returns the ordered process agents should follow when changing this skill.
+      x-blackhost-command:
+        entrypoint: null
+        argv: []
+        reads:
+        - schemas/maintain.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Maintenance metadata.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/MaintainContract"
+  "/manifests/{manifestName}":
+    get:
+      tags:
+      - metadata
+      operationId: getBlackhostManifest
+      summary: Read one manifest.
+      parameters:
+      - name: manifestName
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - aws
+          - core
+          - docker
+          - gcloud
+          - git
+          - gh
+          - homebrew
+          - node
+          - php
+          - python
+          - yaml
+      x-blackhost-command:
+        entrypoint: null
+        argv: []
+        reads:
+        - manifests/{manifestName}.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Manifest contents.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PackageManifest"
+        '404':
+          description: Unknown manifest.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/commands/help":
+    post:
+      tags:
+      - core
+      operationId: runBlackhostHelp
+      summary: Print the root blackhost command surface.
+      security: []
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - "--help"
+        mutatesHost: false
+      responses:
+        '200':
+          description: Help text printed to stdout.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+  "/commands/os":
+    post:
+      tags:
+      - core
+      operationId: runBlackhostOs
+      summary: Print detected BLACKHOST_* host variables.
+      security: []
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - os
+        mutatesHost: false
+        outputs:
+        - BLACKHOST_OS
+        - BLACKHOST_OS_FAMILY
+        - BLACKHOST_OS_ID
+        - BLACKHOST_OS_LIKE
+        - BLACKHOST_OS_VERSION_CODENAME
+        - BLACKHOST_OS_PRETTY
+        - BLACKHOST_ARCH
+      responses:
+        '200':
+          description: Detected host variables.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OsVariables"
+  "/packages/docker/check":
+    post:
+      tags:
+      - docker
+      operationId: runDockerCheck
+      summary: Check Docker CLI, daemon, Compose, Buildx, runtime smoke, and disk usage.
+      description: Runs Docker readiness diagnostics. The command is host-read-only except that Docker may pull and run the hello-world image when the daemon is reachable.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockerCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - docker
+        - check
+        manifest: manifests/docker.json
+        mutatesHost: false
+        mayPullContainerImages: true
+      responses:
+        '200':
+          description: Docker host is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Docker host is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/docker/install":
+    post:
+      tags:
+      - docker
+      operationId: runDockerInstall
+      summary: Install Docker tooling with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockerInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - docker
+        - install
+        manifest: manifests/docker.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/docker/dockerise":
+    post:
+      tags:
+      - docker
+      operationId: runDockerDockerise
+      summary: Scaffold Docker deployment files for a target PHP/Apache or static/nginx app directory.
+      description: Writes Docker scaffold files inside a target workspace directory. Refuses to overwrite existing generated files unless force is true.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockeriseRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - docker
+        - dockerise
+        manifest: manifests/docker.json
+        mutatesHost: false
+        mutatesWorkspace: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Docker scaffold completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options or invalid target.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '409':
+          description: Generated file already exists and force was not enabled.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/docker/run":
+    post:
+      tags:
+      - docker
+      operationId: runDockerRun
+      summary: Build and run a Dockerised app locally.
+      description: Builds a Docker image from a target app directory, replaces a same-name container after confirmation, starts the app on localhost, and optionally opens the browser.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockerRunRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - docker
+        - run
+        manifest: manifests/docker.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        optionalHostMutation:
+        - open browser
+      responses:
+        '200':
+          description: Local app run completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options or invalid target.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: Docker daemon is not reachable.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/docker/update":
+    post:
+      tags:
+      - docker
+      operationId: runDockerUpdate
+      summary: Update Docker tooling with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockerUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - docker
+        - update
+        manifest: manifests/docker.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        optionalHostMutation:
+        - docker system prune
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/git/check":
+    post:
+      tags:
+      - git
+      operationId: runGitCheck
+      summary: Check Git CLI availability.
+      description: Runs Git readiness diagnostics without installing or updating host tooling.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GitCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - git
+        - check
+        manifest: manifests/git.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Git host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Git host tooling is not ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/git/install":
+    post:
+      tags:
+      - git
+      operationId: runGitInstall
+      summary: Install Git with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GitInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - git
+        - install
+        manifest: manifests/git.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/git/update":
+    post:
+      tags:
+      - git
+      operationId: runGitUpdate
+      summary: Update Git with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GitUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - git
+        - update
+        manifest: manifests/git.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gh/auth":
+    post:
+      tags:
+      - gh
+      operationId: runGhAuth
+      summary: Start browser-based GitHub CLI authentication.
+      description: Runs gh auth login --web and waits for the user to complete browser validation.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GhAuthRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gh
+        - auth
+        manifest: manifests/gh.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        requiresBrowserValidation: true
+      responses:
+        '200':
+          description: Authentication completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: GitHub CLI is missing or auth was not completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gh/check":
+    post:
+      tags:
+      - gh
+      operationId: runGhCheck
+      summary: Check GitHub CLI availability and authentication status.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GhCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gh
+        - check
+        manifest: manifests/gh.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: GitHub CLI host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: GitHub CLI host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gh/install":
+    post:
+      tags:
+      - gh
+      operationId: runGhInstall
+      summary: Install GitHub CLI with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GhInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gh
+        - install
+        manifest: manifests/gh.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gh/update":
+    post:
+      tags:
+      - gh
+      operationId: runGhUpdate
+      summary: Update GitHub CLI with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GhUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gh
+        - update
+        manifest: manifests/gh.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gcloud/auth":
+    post:
+      tags:
+      - gcloud
+      operationId: runGcloudAuth
+      summary: Start browser-based Google Cloud CLI authentication.
+      description: Runs gcloud auth login and waits for the user to complete browser validation.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GcloudAuthRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gcloud
+        - auth
+        manifest: manifests/gcloud.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        requiresBrowserValidation: true
+      responses:
+        '200':
+          description: Authentication completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: Google Cloud CLI is missing or auth was not completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gcloud/check":
+    post:
+      tags:
+      - gcloud
+      operationId: runGcloudCheck
+      summary: Check Google Cloud CLI availability and active authentication status.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GcloudCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gcloud
+        - check
+        manifest: manifests/gcloud.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Google Cloud CLI host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Google Cloud CLI host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gcloud/install":
+    post:
+      tags:
+      - gcloud
+      operationId: runGcloudInstall
+      summary: Install Google Cloud CLI with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GcloudInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gcloud
+        - install
+        manifest: manifests/gcloud.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/gcloud/update":
+    post:
+      tags:
+      - gcloud
+      operationId: runGcloudUpdate
+      summary: Update Google Cloud CLI with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/GcloudUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - gcloud
+        - update
+        manifest: manifests/gcloud.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/homebrew/check":
+    post:
+      tags:
+      - homebrew
+      operationId: runHomebrewCheck
+      summary: Check Homebrew availability and optional diagnostics.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/HomebrewCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - homebrew
+        - check
+        manifest: manifests/homebrew.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Homebrew host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Homebrew host tooling is not ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/homebrew/install":
+    post:
+      tags:
+      - homebrew
+      operationId: runHomebrewInstall
+      summary: Install Homebrew with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/HomebrewInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - homebrew
+        - install
+        manifest: manifests/homebrew.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/homebrew/update":
+    post:
+      tags:
+      - homebrew
+      operationId: runHomebrewUpdate
+      summary: Update Homebrew metadata and installed formulae/casks.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/HomebrewUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - homebrew
+        - update
+        manifest: manifests/homebrew.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/aws/auth":
+    post:
+      tags:
+      - aws
+      operationId: runAwsAuth
+      summary: Start AWS SSO browser authentication.
+      description: Runs aws sso login or aws configure sso for the selected profile.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AwsAuthRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - aws
+        - auth
+        manifest: manifests/aws.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        requiresBrowserValidation: true
+      responses:
+        '200':
+          description: Authentication completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: AWS CLI is missing or auth was not completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/aws/check":
+    post:
+      tags:
+      - aws
+      operationId: runAwsCheck
+      summary: Check AWS CLI availability and caller identity resolution.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AwsCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - aws
+        - check
+        manifest: manifests/aws.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: AWS CLI host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: AWS CLI host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/aws/install":
+    post:
+      tags:
+      - aws
+      operationId: runAwsInstall
+      summary: Install AWS CLI v2 with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AwsInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - aws
+        - install
+        manifest: manifests/aws.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/aws/update":
+    post:
+      tags:
+      - aws
+      operationId: runAwsUpdate
+      summary: Update AWS CLI v2 with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AwsUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - aws
+        - update
+        manifest: manifests/aws.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/php/check":
+    post:
+      tags:
+      - php
+      operationId: runPhpCheck
+      summary: Check PHP CLI, Composer, common extensions, inline runtime execution, and optional configuration details.
+      description: Runs PHP and Composer readiness diagnostics without installing or updating host tooling.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PhpCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - php
+        - check
+        manifest: manifests/php.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: PHP and Composer host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: PHP and Composer host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/php/install":
+    post:
+      tags:
+      - php
+      operationId: runPhpInstall
+      summary: Install PHP CLI, common PHP extensions, Composer, and supporting tools with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PhpInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - php
+        - install
+        manifest: manifests/php.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/php/run":
+    post:
+      tags:
+      - php
+      operationId: runPhpRun
+      summary: Start a local PHP development server.
+      description: Starts php -S for a target directory as a background local process and optionally opens the browser.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PhpRunRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - php
+        - run
+        manifest: manifests/php.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        optionalHostMutation:
+        - open browser
+      responses:
+        '200':
+          description: Local PHP server started.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options or invalid target.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: PHP CLI is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/php/update":
+    post:
+      tags:
+      - php
+      operationId: runPhpUpdate
+      summary: Update PHP CLI, common PHP extensions, Composer, and supporting tools with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PhpUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - php
+        - update
+        manifest: manifests/php.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/python/check":
+    post:
+      tags:
+      - python
+      operationId: runPythonCheck
+      summary: Check Python 3, pip, standard modules, inline runtime execution, and optional configuration details.
+      description: Runs Python and pip readiness diagnostics without installing or updating host tooling.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PythonCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - python
+        - check
+        manifest: manifests/python.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Python and pip host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Python and pip host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/python/install":
+    post:
+      tags:
+      - python
+      operationId: runPythonInstall
+      summary: Install Python 3, pip, virtual environment support, headers, and build tools with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PythonInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - python
+        - install
+        manifest: manifests/python.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/python/run":
+    post:
+      tags:
+      - python
+      operationId: runPythonRun
+      summary: Start a local Python static file server.
+      description: Starts python3 -m http.server for a target directory as a background local process and optionally opens the browser.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PythonRunRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - python
+        - run
+        manifest: manifests/python.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        optionalHostMutation:
+        - open browser
+      responses:
+        '200':
+          description: Local Python static server started.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options or invalid target.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: Python 3 is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/python/update":
+    post:
+      tags:
+      - python
+      operationId: runPythonUpdate
+      summary: Update Python 3, pip, virtual environment support, headers, and build tools with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PythonUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - python
+        - update
+        manifest: manifests/python.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/node/check":
+    post:
+      tags:
+      - node
+      operationId: runNodeCheck
+      summary: Check Node.js, npm, npx, inline runtime execution, and optional npm configuration details.
+      description: Runs Node.js tooling readiness diagnostics without installing or updating host tooling.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NodeCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - node
+        - check
+        manifest: manifests/node.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: Node.js, npm, and npx host tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: Node.js host tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/node/install":
+    post:
+      tags:
+      - node
+      operationId: runNodeInstall
+      summary: Install Node.js, npm, and npx with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NodeInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - node
+        - install
+        manifest: manifests/node.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/node/run":
+    post:
+      tags:
+      - node
+      operationId: runNodeRun
+      summary: Start a local Node.js package script.
+      description: Starts npm run <script> for a target directory as a background local process and optionally opens the browser.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NodeRunRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - node
+        - run
+        manifest: manifests/node.json
+        mutatesHost: true
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+        optionalHostMutation:
+        - open browser
+      responses:
+        '200':
+          description: Local Node.js package script started.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options or invalid target.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: npm is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/node/update":
+    post:
+      tags:
+      - node
+      operationId: runNodeUpdate
+      summary: Update Node.js, npm, and npx with explicit prompts.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NodeUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - node
+        - update
+        manifest: manifests/node.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: Update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '501':
+          description: Unsupported host operating system.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/yaml/check":
+    post:
+      tags:
+      - yaml
+      operationId: runYamlCheck
+      summary: Check python3, pip, and PyYAML import readiness.
+      description: Runs YAML tooling diagnostics without installing or updating host tooling.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/YamlCheckRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - yaml
+        - check
+        manifest: manifests/yaml.json
+        mutatesHost: false
+      responses:
+        '200':
+          description: YAML tooling is ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '424':
+          description: YAML tooling is not fully ready.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/yaml/install":
+    post:
+      tags:
+      - yaml
+      operationId: runYamlInstall
+      summary: Install PyYAML into the blackhost-managed virtualenv.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/YamlInstallRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - yaml
+        - install
+        manifest: manifests/yaml.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: PyYAML install path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: python3 or pip is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/yaml/run":
+    post:
+      tags:
+      - yaml
+      operationId: runYamlRun
+      summary: Parse a YAML file with PyYAML.
+      description: Loads a YAML file through PyYAML to validate YAML-backed Python tooling.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/YamlRunRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - yaml
+        - run
+        manifest: manifests/yaml.json
+        mutatesHost: false
+        mutatesWorkspace: false
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: YAML parse completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options, missing file, or invalid YAML.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: PyYAML is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/packages/yaml/update":
+    post:
+      tags:
+      - yaml
+      operationId: runYamlUpdate
+      summary: Update PyYAML in the blackhost-managed virtualenv.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/YamlUpdateRequest"
+      x-blackhost-command:
+        entrypoint: scripts/core/init.sh
+        argv:
+        - yaml
+        - update
+        manifest: manifests/yaml.json
+        mutatesHost: true
+        promptsUnless:
+        - "--yes"
+        supportsDryRun: true
+      responses:
+        '200':
+          description: PyYAML update path completed.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CommandResult"
+        '400':
+          description: Unsupported options.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+        '424':
+          description: python3 or pip is not available.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+components:
+  schemas:
+    SkillIndex:
+      type: object
+      required:
+      - schema
+      - eval
+      - blackhost/
+      properties:
+        schema:
+          type: object
+          required:
+          - name
+          - version
+          properties:
+            name:
+              type: string
+              const: blackhost.skill
+            version:
+              type: string
+              pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          additionalProperties: false
+        eval:
+          type: object
+          required:
+          - path
+          - summary
+          - categories
+          properties:
+            path:
+              type: string
+              const: schemas/eval.json
+            summary:
+              type: string
+            categories:
+              type: array
+              items:
+                type: string
+          additionalProperties: false
+        blackhost/:
+          type: object
+      additionalProperties: true
+    EvalContract:
+      type: object
+      required:
+      - schema
+      - summary
+      - categories
+      properties:
+        schema:
+          type: object
+        summary:
+          type: string
+        categories:
+          type: object
+          required:
+          - using_this_skill
+          - updating_this_skill
+      additionalProperties: true
+    MaintainContract:
+      type: object
+      required:
+      - schema
+      - summary
+      - process
+      properties:
+        schema:
+          type: object
+        summary:
+          type: string
+        process:
+          type: array
+          items:
+            type: object
+        package_change_loop:
+          type: array
+          items:
+            type: string
+        routing_contract:
+          type: object
+        output_contract:
+          type: object
+        assurance:
+          type: object
+      additionalProperties: true
+    ManifestRef:
+      type: object
+      required:
+      - name
+      - path
+      - summary
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        summary:
+          type: string
+      additionalProperties: false
+    PackageManifest:
+      type: object
+      required:
+      - script
+      - summary
+      - modules_dir
+      - modules
+      - commands
+      - routing
+      - dependencies
+      - safety
+      - notes
+      properties:
+        script:
+          type: string
+        summary:
+          type: string
+        modules_dir:
+          type: string
+        modules:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/Module"
+        commands:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/Command"
+        routing:
+          "$ref": "#/components/schemas/Routing"
+        dependencies:
+          "$ref": "#/components/schemas/Dependencies"
+        safety:
+          "$ref": "#/components/schemas/Safety"
+        notes:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    Module:
+      type: object
+      required:
+      - path
+      - summary
+      - functions
+      properties:
+        path:
+          type: string
+        summary:
+          type: string
+        exports:
+          type: array
+          items:
+            type: string
+        configuration:
+          type: array
+          items:
+            type: string
+        functions:
+          type: array
+          items:
+            type: string
+            pattern: "^blackhost_[A-Za-z0-9_]+$"
+      additionalProperties: false
+    Command:
+      type: object
+      required:
+      - run
+      - summary
+      - mutates_host
+      properties:
+        run:
+          type: string
+        summary:
+          type: string
+        options:
+          type: object
+          additionalProperties:
+            type: string
+        outputs:
+          type: array
+          items:
+            type: string
+        packages:
+          type: array
+          items:
+            type: string
+        mutates_host:
+          oneOf:
+          - type: boolean
+          - type: string
+            enum:
+            - package-dependent
+            - command-dependent
+        mutates_workspace:
+          type: boolean
+        supported_hosts:
+          type: object
+          additionalProperties:
+            type: string
+        expected_failure_when:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    Routing:
+      type: object
+      required:
+      - grammar
+      - packages
+      properties:
+        grammar:
+          type: array
+          items:
+            type: string
+        discovery:
+          type: object
+          additionalProperties:
+            type: string
+        packages:
+          type: object
+          additionalProperties:
+            type: object
+      additionalProperties: false
+    Dependencies:
+      type: object
+      properties:
+        required:
+          type: array
+          items:
+            type: string
+        optional:
+          type: array
+          items:
+            type: string
+        macos:
+          type: array
+          items:
+            type: string
+        debian_like_linux:
+          type: array
+          items:
+            type: string
+        compatibility:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    Safety:
+      type: object
+      required:
+      - mutates_host
+      - notes
+      properties:
+        mutates_host:
+          oneOf:
+          - type: boolean
+          - type: string
+            enum:
+            - package-dependent
+            - command-dependent
+        notes:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    DockerCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    DockerInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    DockerUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        prune:
+          type: boolean
+          default: false
+          description: Maps to --prune.
+      additionalProperties: false
+    DockeriseRequest:
+      type: object
+      required:
+      - targetDir
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        targetDir:
+          type: string
+          description: Target app directory passed as the positional argument.
+        type:
+          type: string
+          default: auto
+          enum:
+          - auto
+          - php-apache
+          - static-nginx
+          description: Maps to --type.
+        port:
+          type: integer
+          default: 8080
+          minimum: 1
+          maximum: 65535
+          description: Maps to --port.
+        force:
+          type: boolean
+          default: false
+          description: Maps to --force.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    DockerRunRequest:
+      type: object
+      required:
+      - targetDir
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        targetDir:
+          type: string
+          description: Dockerised app directory passed as the positional argument.
+        port:
+          type: integer
+          default: 8080
+          minimum: 1
+          maximum: 65535
+          description: Maps to --port.
+        containerPort:
+          type: integer
+          default: 8080
+          minimum: 1
+          maximum: 65535
+          description: Maps to --container-port.
+        image:
+          type: string
+          description: Maps to --image.
+        name:
+          type: string
+          description: Maps to --name.
+        noBuild:
+          type: boolean
+          default: false
+          description: Maps to --no-build.
+        open:
+          type: boolean
+          default: false
+          description: Maps to --open.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GitCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    GitInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GitUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GhAuthRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        hostname:
+          type: string
+          default: github.com
+          description: Maps to --hostname.
+        gitProtocol:
+          type: string
+          default: https
+          enum:
+          - https
+          - ssh
+          description: Maps to --git-protocol.
+        scopes:
+          type: string
+          description: Maps to --scopes.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GhCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        hostname:
+          type: string
+          default: github.com
+          description: Maps to --hostname.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    GhInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GhUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GcloudAuthRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GcloudCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    GcloudInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    GcloudUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    HomebrewCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    HomebrewInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    HomebrewUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    AwsAuthRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        profile:
+          type: string
+          default: default
+          description: Maps to --profile.
+        configure:
+          type: boolean
+          default: false
+          description: Maps to --configure.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    AwsCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        profile:
+          type: string
+          default: default
+          description: Maps to --profile.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    AwsInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    AwsUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PhpCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    PhpInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PhpRunRequest:
+      type: object
+      required:
+      - targetDir
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        targetDir:
+          type: string
+          description: PHP app directory passed as the positional argument.
+        host:
+          type: string
+          default: 127.0.0.1
+          description: Maps to --host.
+        port:
+          type: integer
+          default: 8000
+          minimum: 1
+          maximum: 65535
+          description: Maps to --port.
+        router:
+          type: string
+          description: Maps to --router.
+        open:
+          type: boolean
+          default: false
+          description: Maps to --open.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PhpUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PythonCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    PythonInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PythonRunRequest:
+      type: object
+      required:
+      - targetDir
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        targetDir:
+          type: string
+          description: Static directory passed as the positional argument.
+        host:
+          type: string
+          default: 127.0.0.1
+          description: Maps to --host.
+        port:
+          type: integer
+          default: 8000
+          minimum: 1
+          maximum: 65535
+          description: Maps to --port.
+        open:
+          type: boolean
+          default: false
+          description: Maps to --open.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    PythonUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    NodeCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    NodeInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    NodeRunRequest:
+      type: object
+      required:
+      - targetDir
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        targetDir:
+          type: string
+          description: Node.js app directory containing package.json, passed as the positional argument.
+        script:
+          type: string
+          default: dev
+          description: Maps to --script.
+        host:
+          type: string
+          default: 127.0.0.1
+          description: Maps to --host.
+        port:
+          type: integer
+          default: 5173
+          minimum: 1
+          maximum: 65535
+          description: Maps to --port.
+        open:
+          type: boolean
+          default: false
+          description: Maps to --open.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    NodeUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    YamlCheckRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+        verbose:
+          type: boolean
+          default: false
+          description: Maps to --verbose.
+      additionalProperties: false
+    YamlInstallRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    YamlRunRequest:
+      type: object
+      required:
+      - yamlFile
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        yamlFile:
+          type: string
+          description: YAML file passed as the positional argument.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    YamlUpdateRequest:
+      type: object
+      properties:
+        json:
+          type: boolean
+          default: false
+          description: Maps to --json.
+        dryRun:
+          type: boolean
+          default: false
+          description: Maps to --dry-run.
+        'yes':
+          type: boolean
+          default: false
+          description: Maps to --yes.
+      additionalProperties: false
+    OsVariables:
+      type: object
+      required:
+      - BLACKHOST_OS
+      - BLACKHOST_OS_FAMILY
+      - BLACKHOST_OS_ID
+      - BLACKHOST_OS_LIKE
+      - BLACKHOST_OS_VERSION_CODENAME
+      - BLACKHOST_OS_PRETTY
+      - BLACKHOST_ARCH
+      properties:
+        BLACKHOST_OS:
+          type: string
+        BLACKHOST_OS_FAMILY:
+          type: string
+        BLACKHOST_OS_ID:
+          type: string
+        BLACKHOST_OS_LIKE:
+          type: string
+        BLACKHOST_OS_VERSION_CODENAME:
+          type: string
+        BLACKHOST_OS_PRETTY:
+          type: string
+        BLACKHOST_ARCH:
+          type: string
+      additionalProperties: false
+    CommandResult:
+      type: object
+      required:
+      - schema
+      - version
+      - package
+      - command
+      - status
+      - exit_code
+      - dry_run
+      - os
+      - os_id
+      - os_pretty
+      - arch
+      properties:
+        schema:
+          type: string
+          const: blackhost.result
+        version:
+          type: string
+        package:
+          type: string
+        command:
+          type: string
+        status:
+          type: string
+          enum:
+          - ok
+          - error
+        exit_code:
+          type: integer
+          minimum: 0
+        dry_run:
+          type: boolean
+        os:
+          type: string
+        os_id:
+          type: string
+        os_pretty:
+          type: string
+        arch:
+          type: string
+        exitCode:
+          type: integer
+          minimum: 0
+        stdout:
+          type: string
+        stderr:
+          type: string
+      additionalProperties: false
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+  securitySchemes: {}
+security: []
+x-blackhost:
+  schema:
+    name: blackhost.skill.openapi
+    version: 0.1.0
+  entrypoint:
+    path: scripts/core/init.sh
+    run: scripts/core/init.sh [--json] <package> <command> [options]
+  eval:
+    path: schemas/eval.json
+    summary: Deterministic checks and principles for using and updating the blackhost skill.
+  maintain:
+    path: schemas/maintain.json
+    summary: Deterministic maintenance process for changing blackhost packages, routing, schemas, and assurance.
+  assurance:
+    dry: assurance/dry.sh
+    eval: assurance/eval.sh
+    log: assurance/log.txt
+  local_index:
+    json: local/index.json
+    html: local/index.html
+    template: templates/index.json
+    url: http://localhost:8765/index.html
+    server_pid: local/index-server.pid
+    server_log: local/index-server.log
+    auto_open: true
+  manifests:
+    aws:
+      path: manifests/aws.json
+      summary: AWS CLI package modules, SSO browser authentication, commands, options, supported hosts, and mutation boundaries.
+    core:
+      path: manifests/core.json
+      summary: Core router, host detection, helper modules, root commands, routing grammar, and shared shell dependencies.
+    docker:
+      path: manifests/docker.json
+      summary: Docker package modules, app scaffolding, local app runs, commands, options, supported hosts, and mutation boundaries.
+    git:
+      path: manifests/git.json
+      summary: Git package modules, commands, options, supported hosts, repository context, and mutation boundaries.
+    gh:
+      path: manifests/gh.json
+      summary: GitHub CLI package modules, browser authentication, commands, options, supported hosts, and mutation boundaries.
+    gcloud:
+      path: manifests/gcloud.json
+      summary: Google Cloud CLI package modules, browser authentication, commands, options, supported hosts, and mutation boundaries.
+    homebrew:
+      path: manifests/homebrew.json
+      summary: Homebrew package-manager modules, commands, options, supported hosts, and mutation boundaries.
+    php:
+      path: manifests/php.json
+      summary: PHP package modules, Composer integration, local app runs, commands, options, supported hosts, and mutation boundaries.
+    node:
+      path: manifests/node.json
+      summary: Node.js package modules, npm/npx integration, local app runs, commands, options, supported hosts, and mutation boundaries.
+    python:
+      path: manifests/python.json
+      summary: Python package modules, pip integration, local static app runs, commands, options, supported hosts, and mutation boundaries.
+    yaml:
+      path: manifests/yaml.json
+      summary: YAML package modules, managed-venv PyYAML integration, commands, options, supported hosts, and mutation boundaries.
+  filesystem:
+    blackhost/:
+      README.md: Minimal human-facing skill overview.
+      VERSION: Current blackhost skill release version.
+      CHANGELOG.md: Versioned one-line release log with Version, User, LLM, and 240-character summary entries.
+      LICENSE.md: PolyForm Shield License 1.0.0 with required Blackaft notice.
+      local/:
+        index.json: Generated local status cache.
+        index.html: Generated static local status view with raw assurance/log.txt output at the bottom.
+        index-server.pid: Generated local status HTTP server PID.
+        index-server.log: Generated local status HTTP server log.
+        .venv/: Generated managed Python virtualenv for blackhost-owned tooling.
+      schemas/eval.json: Deterministic usage and update checks.
+      schemas/maintain.json: Deterministic maintenance process.
+      assurance/:
+        dry.sh: Dry-run assurance runner.
+        eval.sh: Top-level assurance runner.
+        log.txt: Overwritten latest assurance run log.
+      manifests/:
+        aws.json: AWS CLI package manifest.
+        core.json: Core package manifest.
+        docker.json: Docker package manifest.
+        gcloud.json: Google Cloud CLI package manifest.
+        git.json: Git package manifest.
+        gh.json: GitHub CLI package manifest.
+        homebrew.json: Homebrew package-manager manifest.
+        node.json: Node.js package manifest.
+        php.json: PHP package manifest.
+        python.json: Python package manifest.
+        yaml.json: YAML package manifest.
+      scripts/:
+        aws/:
+          auth.sh: AWS SSO browser authentication command implementation.
+          check.sh: AWS CLI readiness command implementation.
+          install.sh: AWS CLI installation command implementation.
+          commons.sh: AWS CLI common helpers.
+          update.sh: AWS CLI update command implementation.
+        core/:
+          helpers/: Shared router, terminal UX, OS detection, and temporary file helpers.
+          init.sh: Root CLI entrypoint.
+        docker/:
+          check.sh: Docker readiness command implementation.
+          dockerise.sh: Docker scaffold command implementation.
+          install.sh: Docker installation command implementation.
+          commons.sh: Docker common helpers for CLI availability, daemon reachability, Compose, Buildx, host guidance, and daemon waiting.
+          run.sh: Docker local app build/run/open command implementation.
+          update.sh: Docker update command implementation.
+        git/:
+          check.sh: Git readiness command implementation.
+          install.sh: Git installation command implementation.
+          commons.sh: Git common helpers.
+          update.sh: Git update command implementation.
+        gh/:
+          auth.sh: GitHub CLI browser authentication command implementation.
+          check.sh: GitHub CLI readiness command implementation.
+          install.sh: GitHub CLI installation command implementation.
+          commons.sh: GitHub CLI common helpers.
+          update.sh: GitHub CLI update command implementation.
+        gcloud/:
+          auth.sh: Google Cloud CLI browser authentication command implementation.
+          check.sh: Google Cloud CLI readiness command implementation.
+          install.sh: Google Cloud CLI installation command implementation.
+          commons.sh: Google Cloud CLI common helpers.
+          update.sh: Google Cloud CLI update command implementation.
+        homebrew/:
+          check.sh: Homebrew readiness command implementation.
+          install.sh: Homebrew installation command implementation.
+          commons.sh: Homebrew common helpers.
+          update.sh: Homebrew update command implementation.
+        php/:
+          check.sh: PHP readiness command implementation.
+          install.sh: PHP and Composer installation command implementation.
+          commons.sh: PHP and Composer common helpers.
+          run.sh: PHP local app run command implementation.
+          update.sh: PHP and Composer update command implementation.
+        node/:
+          check.sh: Node.js readiness command implementation.
+          install.sh: Node.js installation command implementation.
+          commons.sh: Node.js common helpers.
+          run.sh: Node.js local app run command implementation.
+          update.sh: Node.js update command implementation.
+        python/:
+          check.sh: Python readiness command implementation.
+          install.sh: Python and pip installation command implementation.
+          commons.sh: Python and pip common helpers.
+          run.sh: Python local static app run command implementation.
+          update.sh: Python and pip update command implementation.
+        yaml/:
+          check.sh: YAML readiness command implementation.
+          install.sh: PyYAML installation command implementation.
+          commons.sh: YAML common helpers.
+          run.sh: YAML parse command implementation.
+          update.sh: PyYAML update command implementation.
+      templates/:
+        .gitignore: Reusable generated-state ignore template.
+        index.json: Reusable local status index template.
+        manifest.json: Reusable package manifest template.
+        scripts/:
+          auth.sh: Reusable package browser-authentication command template.
+          check.sh: Reusable package readiness command template.
+          install.sh: Reusable package installation command template.
+          commons.sh: Reusable package commons helper template.
+          run.sh: Reusable package run command template.
+          update.sh: Reusable package update command template.

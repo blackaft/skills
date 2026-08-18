@@ -1,0 +1,144 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Homebrew package-manager checks, installation, updates, and diagnostics.",
+    "modules_dir": "scripts/homebrew/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "Homebrew common helpers for CLI availability, version output, and prefix diagnostics.",
+            "functions": [
+                "blackhost_homebrew_cli_available",
+                "blackhost_homebrew_print_version",
+                "blackhost_homebrew_print_prefix"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "Homebrew readiness command implementation.",
+            "functions": [
+                "blackhost_homebrew_check_help",
+                "blackhost_homebrew_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "Homebrew installation command implementation.",
+            "functions": [
+                "blackhost_homebrew_install_help",
+                "blackhost_homebrew_install",
+                "blackhost_homebrew_install_unix"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "Homebrew update command implementation.",
+            "functions": [
+                "blackhost_homebrew_update_help",
+                "blackhost_homebrew_update"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] homebrew check [--yes] [--verbose]",
+            "summary": "Checks Homebrew availability and optional diagnostics.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print Homebrew prefix and brew doctor output when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Homebrew is missing."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] homebrew install [--dry-run] [--yes]",
+            "summary": "Installs Homebrew with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the official Homebrew install command without executing it, even if Homebrew is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Runs the official Homebrew install script.",
+                "linux": "Runs the official Homebrew install script."
+            },
+            "expected_failure_when": [
+                "The host operating system is unsupported.",
+                "curl is missing.",
+                "The user declines the install prompt.",
+                "The Homebrew install script fails."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] homebrew update [--dry-run] [--yes]",
+            "summary": "Updates Homebrew metadata and installed formulae/casks with explicit prompts.",
+            "options": {
+                "--dry-run": "Print Homebrew update commands without executing them, even if Homebrew is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "supported_hosts": {
+                "macos": "Runs brew update and brew upgrade.",
+                "linux": "Runs brew update and brew upgrade."
+            },
+            "expected_failure_when": [
+                "Homebrew is missing outside dry-run.",
+                "The user declines the update prompt.",
+                "The Homebrew update command fails."
+            ]
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] homebrew check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] homebrew install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] homebrew update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat"
+        ],
+        "optional": [
+            "brew",
+            "curl"
+        ],
+        "macos": [
+            "curl for install"
+        ],
+        "linux": [
+            "curl for install"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install or update Homebrew.",
+            "install mutates the host by running the official Homebrew install script and prompts unless --yes is provided.",
+            "update mutates installed Homebrew metadata and packages and prompts unless --yes is provided.",
+            "install and update support --dry-run where command paths are printed but not executed.",
+            "dry-run must not short-circuit just because Homebrew is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "No run command is currently defined because Homebrew does not expose a durable local app process for this skill."
+    ]
+}

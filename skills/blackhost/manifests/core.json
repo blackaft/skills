@@ -1,0 +1,239 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "Core blackhost router, host detection, shared helper loading, and package dispatch.",
+    "modules_dir": "scripts/core/helpers/",
+    "modules": {
+        "run": {
+            "path": "run.sh",
+            "summary": "Bootstraps skill paths, detects the host OS, loads shared helpers, discovers package modules, and routes commands by naming convention.",
+            "exports": [
+                "BLACKHOST_SCRIPT_ROOT",
+                "BLACKHOST_SKILL_ROOT",
+                "BLACKHOST_OS_KERNEL",
+                "BLACKHOST_ARCH",
+                "BLACKHOST_OS",
+                "BLACKHOST_OS_FAMILY",
+                "BLACKHOST_OS_ID",
+                "BLACKHOST_OS_LIKE",
+                "BLACKHOST_OS_VERSION_CODENAME",
+                "BLACKHOST_OS_PRETTY"
+            ],
+            "functions": [
+                "blackhost_init_paths",
+                "blackhost_detect_os",
+                "blackhost_os_is_debian_like",
+                "blackhost_print_os",
+                "blackhost_load_core",
+                "blackhost_identifier_to_function_fragment",
+                "blackhost_package_names",
+                "blackhost_package_command_names",
+                "blackhost_join_lines",
+                "blackhost_package_exists",
+                "blackhost_load_package",
+                "blackhost_help",
+                "blackhost_package_help",
+                "blackhost_dispatch_and_report",
+                "blackhost_run",
+                "blackhost_bootstrap"
+            ]
+        },
+        "terminal": {
+            "path": "terminal.sh",
+            "summary": "Shared terminal UX, prompts, dry-run command execution, JSON result output, shell command execution, and command availability checks.",
+            "configuration": [
+                "BLACKHOST_ASSUME_YES",
+                "BLACKHOST_DRY_RUN",
+                "BLACKHOST_JSON"
+            ],
+            "functions": [
+                "blackhost_section",
+                "blackhost_info",
+                "blackhost_ok",
+                "blackhost_warn",
+                "blackhost_fail",
+                "blackhost_dry_run_summary",
+                "blackhost_json_escape",
+                "blackhost_json_result",
+                "blackhost_confirm",
+                "blackhost_ack",
+                "blackhost_run_cmd",
+                "blackhost_run_shell",
+                "blackhost_require_command"
+            ]
+        },
+        "index": {
+            "path": "index.sh",
+            "summary": "Generated local status index and static HTML renderer for latest blackhost command output and raw assurance log output.",
+            "exports": [
+                "BLACKHOST_LOCAL_ROOT",
+                "BLACKHOST_INDEX_PATH",
+                "BLACKHOST_INDEX_HTML_PATH",
+                "BLACKHOST_INDEX_URL",
+                "BLACKHOST_INDEX_SERVER_HOST",
+                "BLACKHOST_INDEX_SERVER_PORT",
+                "BLACKHOST_INDEX_SERVER_PID_PATH",
+                "BLACKHOST_INDEX_SERVER_LOG_PATH"
+            ],
+            "functions": [
+                "blackhost_now_utc",
+                "blackhost_json_string",
+                "blackhost_html_escape",
+                "blackhost_tool_available_json",
+                "blackhost_tool_version_json",
+                "blackhost_tool_version_text",
+                "blackhost_yaml_python_bin_for_index",
+                "blackhost_index_write_json",
+                "blackhost_index_render_html",
+                "blackhost_index_record",
+                "blackhost_index_server_running",
+                "blackhost_index_start_server",
+                "blackhost_index_open_html"
+            ]
+        },
+        "temp": {
+            "path": "temp.sh",
+            "summary": "Temporary file registry with automatic cleanup on shell exit.",
+            "exports": [
+                "BLACKHOST_TMP_FILES"
+            ],
+            "functions": [
+                "blackhost_tmp_file",
+                "blackhost_cleanup_tmp_files"
+            ]
+        }
+    },
+    "commands": {
+        "help": {
+            "run": "scripts/core/init.sh [--json] --help",
+            "summary": "Prints the root blackhost command surface.",
+            "options": {
+                "--json": "Append a compact machine-readable result object."
+            },
+            "mutates_host": false
+        },
+        "os": {
+            "run": "scripts/core/init.sh [--json] os",
+            "summary": "Prints BLACKHOST_* host detection variables.",
+            "options": {
+                "--json": "Append a compact machine-readable result object."
+            },
+            "outputs": [
+                "BLACKHOST_OS",
+                "BLACKHOST_OS_FAMILY",
+                "BLACKHOST_OS_ID",
+                "BLACKHOST_OS_LIKE",
+                "BLACKHOST_OS_VERSION_CODENAME",
+                "BLACKHOST_OS_PRETTY",
+                "BLACKHOST_ARCH"
+            ],
+            "mutates_host": false
+        },
+        "package": {
+            "run": "scripts/core/init.sh [--json] <package> <command> [options]",
+            "summary": "Routes to a package manifest-backed command implementation discovered from scripts/<package>/ and named blackhost_<package>_<command>.",
+            "options": {
+                "--json": "Append a compact machine-readable result object."
+            },
+            "packages": [
+                "aws",
+                "docker",
+                "gcloud",
+                "git",
+                "gh",
+                "homebrew",
+                "node",
+                "php",
+                "python",
+                "yaml"
+            ],
+            "mutates_host": "package-dependent"
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh --help",
+            "scripts/core/init.sh [--json] os",
+            "scripts/core/init.sh [--json] <package> <command> [options]"
+        ],
+        "discovery": {
+            "packages": "scripts/* directories excluding scripts/core",
+            "commands": "scripts/<package>/*.sh files excluding commons.sh",
+            "function": "blackhost_<package>_<command>, with hyphens converted to underscores"
+        },
+        "packages": {
+            "aws": {
+                "manifest": "manifests/aws.json",
+                "run": "scripts/core/init.sh aws <auth|check|install|update> [options]"
+            },
+            "docker": {
+                "manifest": "manifests/docker.json",
+                "run": "scripts/core/init.sh docker <check|dockerise|install|run|update> [options]"
+            },
+            "gcloud": {
+                "manifest": "manifests/gcloud.json",
+                "run": "scripts/core/init.sh gcloud <auth|check|install|update> [options]"
+            },
+            "git": {
+                "manifest": "manifests/git.json",
+                "run": "scripts/core/init.sh git <check|install|update> [options]"
+            },
+            "gh": {
+                "manifest": "manifests/gh.json",
+                "run": "scripts/core/init.sh gh <auth|check|install|update> [options]"
+            },
+            "homebrew": {
+                "manifest": "manifests/homebrew.json",
+                "run": "scripts/core/init.sh homebrew <check|install|update> [options]"
+            },
+            "node": {
+                "manifest": "manifests/node.json",
+                "run": "scripts/core/init.sh node <check|install|run|update> [options]"
+            },
+            "php": {
+                "manifest": "manifests/php.json",
+                "run": "scripts/core/init.sh php <check|install|run|update> [options]"
+            },
+            "python": {
+                "manifest": "manifests/python.json",
+                "run": "scripts/core/init.sh python <check|install|run|update> [options]"
+            },
+            "yaml": {
+                "manifest": "manifests/yaml.json",
+                "run": "scripts/core/init.sh yaml <check|install|run|update> [options]"
+            }
+        }
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "mktemp",
+            "sed",
+            "cat",
+            "find",
+            "sort",
+            "basename",
+            "tr",
+            "date",
+            "awk",
+            "mv"
+        ],
+        "optional": [
+            "python3 for local status server and system default browser opening"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": false,
+        "notes": [
+            "Core routing and OS detection are read-only.",
+            "Routed commands overwrite generated local status artifacts at local/index.json and local/index.html; the HTML view includes raw assurance/log.txt output when available.",
+            "Routed commands start or reuse the local status server and trigger the system default browser for http://localhost:8765/index.html unless BLACKHOST_OPEN_INDEX=false is set for automation.",
+            "Host mutation is delegated to package commands and declared in package manifests."
+        ]
+    },
+    "notes": []
+}

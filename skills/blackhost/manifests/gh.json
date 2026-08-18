@@ -1,0 +1,168 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "GitHub CLI checks, installation, updates, and browser-based authentication.",
+    "modules_dir": "scripts/gh/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "GitHub CLI common helpers for CLI availability, version output, and auth status checks.",
+            "functions": [
+                "blackhost_gh_cli_available",
+                "blackhost_gh_print_version",
+                "blackhost_gh_auth_available",
+                "blackhost_gh_print_auth_status"
+            ]
+        },
+        "auth": {
+            "path": "auth.sh",
+            "summary": "GitHub CLI browser authentication command implementation.",
+            "functions": [
+                "blackhost_gh_auth_help",
+                "blackhost_gh_auth"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "GitHub CLI readiness command implementation.",
+            "functions": [
+                "blackhost_gh_check_help",
+                "blackhost_gh_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "GitHub CLI installation command implementation.",
+            "functions": [
+                "blackhost_gh_install_help",
+                "blackhost_gh_install",
+                "blackhost_gh_install_macos",
+                "blackhost_gh_install_linux"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "GitHub CLI update command implementation.",
+            "functions": [
+                "blackhost_gh_update_help",
+                "blackhost_gh_update",
+                "blackhost_gh_update_macos",
+                "blackhost_gh_update_linux"
+            ]
+        }
+    },
+    "commands": {
+        "auth": {
+            "run": "scripts/core/init.sh [--json] gh auth [--hostname github.com] [--git-protocol https|ssh] [--scopes SCOPE_LIST] [--dry-run] [--yes]",
+            "summary": "Starts browser-based GitHub CLI authentication and validates the final auth status.",
+            "options": {
+                "--hostname": "GitHub hostname to authenticate. Defaults to github.com.",
+                "--git-protocol": "Git protocol gh should configure: https or ssh. Defaults to https.",
+                "--scopes": "Optional comma-separated OAuth scopes to request.",
+                "--dry-run": "Print the browser auth command without executing it.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "GitHub CLI is missing outside dry-run.",
+                "The user does not complete browser validation.",
+                "GitHub CLI still reports unauthenticated after login."
+            ]
+        },
+        "check": {
+            "run": "scripts/core/init.sh [--json] gh check [--hostname github.com] [--yes] [--verbose]",
+            "summary": "Checks GitHub CLI availability and authentication status.",
+            "options": {
+                "--hostname": "GitHub hostname to inspect. Defaults to github.com.",
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print gh auth status output.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "GitHub CLI is missing.",
+                "GitHub CLI is not authenticated for the selected hostname."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] gh install [--dry-run] [--yes]",
+            "summary": "Installs GitHub CLI with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if GitHub CLI is already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Installs gh through Homebrew.",
+                "debian_like_linux": "Configures GitHub CLI's apt repository and installs gh through apt."
+            }
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] gh update [--dry-run] [--yes]",
+            "summary": "Updates GitHub CLI with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if GitHub CLI is not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Updates gh through Homebrew.",
+                "debian_like_linux": "Updates gh through apt when the GitHub CLI repository is configured."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] gh auth [--hostname github.com] [--git-protocol https|ssh] [--scopes SCOPE_LIST] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] gh check [--hostname github.com] [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] gh install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] gh update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "sed",
+            "cat"
+        ],
+        "optional": [
+            "gh"
+        ],
+        "macos": [
+            "brew"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "curl",
+            "dpkg",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install, update, or authenticate GitHub CLI.",
+            "auth mutates GitHub CLI credential state and requires the user to complete browser validation.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install, update, and auth support --dry-run where command paths are printed but not executed.",
+            "dry-run must not short-circuit just because GitHub CLI is already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "No run command is currently defined because GitHub CLI does not expose a durable local app process for this skill.",
+        "auth.sh is the package pattern for future browser validation flows such as gcloud auth login or aws sso login."
+    ]
+}

@@ -1,0 +1,178 @@
+{
+    "script": "scripts/core/init.sh",
+    "summary": "PHP CLI, common PHP extensions, Composer checks, local app runs, installation, updates, and diagnostics.",
+    "modules_dir": "scripts/php/",
+    "modules": {
+        "commons": {
+            "path": "commons.sh",
+            "summary": "PHP and Composer common helpers for CLI availability, versions, PHP ini, and extension checks.",
+            "functions": [
+                "blackhost_php_cli_available",
+                "blackhost_composer_available",
+                "blackhost_php_extension_available",
+                "blackhost_php_print_version",
+                "blackhost_composer_print_version",
+                "blackhost_php_print_ini",
+                "blackhost_php_print_extensions"
+            ]
+        },
+        "check": {
+            "path": "check.sh",
+            "summary": "PHP and Composer readiness command implementation.",
+            "functions": [
+                "blackhost_php_check_help",
+                "blackhost_php_check"
+            ]
+        },
+        "install": {
+            "path": "install.sh",
+            "summary": "PHP and Composer installation command implementation.",
+            "functions": [
+                "blackhost_php_install_help",
+                "blackhost_php_install",
+                "blackhost_php_install_macos",
+                "blackhost_php_install_linux",
+                "blackhost_php_install_diagnostics"
+            ]
+        },
+        "run": {
+            "path": "run.sh",
+            "summary": "PHP local app run command implementation.",
+            "functions": [
+                "blackhost_php_run_help",
+                "blackhost_php_run"
+            ]
+        },
+        "update": {
+            "path": "update.sh",
+            "summary": "PHP and Composer update command implementation.",
+            "functions": [
+                "blackhost_php_update_help",
+                "blackhost_php_update",
+                "blackhost_php_update_macos",
+                "blackhost_php_update_linux",
+                "blackhost_php_update_diagnostics"
+            ]
+        }
+    },
+    "commands": {
+        "check": {
+            "run": "scripts/core/init.sh [--json] php check [--yes] [--verbose]",
+            "summary": "Checks PHP CLI, Composer, common PHP extensions, inline runtime execution, and optional configuration details.",
+            "options": {
+                "--yes": "Do not pause for the final acknowledgement prompt.",
+                "--verbose": "Print PHP ini and global Composer configuration when available.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": false,
+            "expected_failure_when": [
+                "PHP CLI is missing.",
+                "Composer is missing.",
+                "One or more common PHP extensions are missing.",
+                "PHP inline runtime execution fails."
+            ]
+        },
+        "install": {
+            "run": "scripts/core/init.sh [--json] php install [--dry-run] [--yes]",
+            "summary": "Installs PHP CLI, common PHP extensions, Composer, and supporting tools with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected install command path without executing it, even if PHP and Composer are already installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Installs php and composer through Homebrew.",
+                "debian_like_linux": "Installs PHP CLI, common extensions, Composer, unzip, and git through apt."
+            }
+        },
+        "run": {
+            "run": "scripts/core/init.sh [--json] php run <target-dir> [--host 127.0.0.1] [--port 8000] [--router FILE] [--open] [--dry-run] [--yes]",
+            "summary": "Starts a local PHP development server for a target directory and optionally opens it in a browser.",
+            "options": {
+                "--host": "Host interface for php -S. Defaults to 127.0.0.1.",
+                "--port": "Local browser port. Defaults to 8000.",
+                "--router": "Optional PHP router script path, relative to target-dir or absolute.",
+                "--open": "Open http://<host>:<port> after the server starts.",
+                "--dry-run": "Print server and browser commands without executing them.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "mutates_workspace": false,
+            "expected_failure_when": [
+                "Target directory is missing.",
+                "PHP CLI is missing outside dry-run.",
+                "A blackhost PHP server PID file already points to a running process for the requested port."
+            ]
+        },
+        "update": {
+            "run": "scripts/core/init.sh [--json] php update [--dry-run] [--yes]",
+            "summary": "Updates PHP CLI, common PHP extensions, Composer, and supporting tools with explicit prompts.",
+            "options": {
+                "--dry-run": "Print the detected update command path without executing it, even if PHP and Composer are not installed.",
+                "--yes": "Auto-confirm prompts.",
+                "--json": "Append a compact machine-readable result object.",
+                "--help": "Show command help."
+            },
+            "mutates_host": true,
+            "supported_hosts": {
+                "macos": "Updates php and composer through Homebrew.",
+                "debian_like_linux": "Updates PHP CLI, common extensions, Composer, unzip, and git through apt."
+            }
+        }
+    },
+    "routing": {
+        "grammar": [
+            "scripts/core/init.sh [--json] php check [--yes] [--verbose]",
+            "scripts/core/init.sh [--json] php install [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] php run <target-dir> [--host 127.0.0.1] [--port 8000] [--router FILE] [--open] [--dry-run] [--yes]",
+            "scripts/core/init.sh [--json] php update [--dry-run] [--yes]"
+        ],
+        "packages": {}
+    },
+    "dependencies": {
+        "required": [
+            "bash",
+            "uname",
+            "mktemp",
+            "sed",
+            "cat",
+            "grep",
+            "kill"
+        ],
+        "optional": [
+            "php",
+            "composer",
+            "open",
+            "xdg-open"
+        ],
+        "macos": [
+            "brew"
+        ],
+        "debian_like_linux": [
+            "sudo",
+            "apt-get"
+        ],
+        "compatibility": [
+            "macOS default Bash 3.x",
+            "modern Bash on Debian/Ubuntu"
+        ]
+    },
+    "safety": {
+        "mutates_host": "command-dependent",
+        "notes": [
+            "check is host-read-only and does not install or update PHP or Composer.",
+            "run starts a local background PHP development server process and prints its stop command.",
+            "install and update mutate the host and prompt unless --yes is provided.",
+            "install and update support --dry-run where detected host command paths are printed but not executed.",
+            "dry-run must not short-circuit just because PHP and Composer are already installed or currently missing."
+        ]
+    },
+    "notes": [
+        "Composer is managed as part of the php package because it is PHP-specific development tooling."
+    ]
+}

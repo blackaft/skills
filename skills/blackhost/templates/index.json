@@ -1,0 +1,155 @@
+{
+    "schema": {
+        "name": "blackhost.local_index",
+        "version": "0.1.0"
+    },
+    "updated_at": null,
+    "local_root": "local/",
+    "host": {
+        "os": null,
+        "os_id": null,
+        "os_pretty": null,
+        "arch": null
+    },
+    "last_action": {
+        "package": null,
+        "command": null,
+        "status": null,
+        "exit_code": null,
+        "dry_run": false,
+        "ran_at": null,
+        "terminal_output": ""
+    },
+    "packages": {
+        "docker": {
+            "checked_at": null,
+            "tools": {
+                "docker": {
+                    "available": false,
+                    "version": ""
+                },
+                "docker_compose": {
+                    "available": false,
+                    "version": ""
+                },
+                "docker_buildx": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "php": {
+            "checked_at": null,
+            "tools": {
+                "php": {
+                    "available": false,
+                    "version": ""
+                },
+                "composer": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "git": {
+            "checked_at": null,
+            "tools": {
+                "git": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "homebrew": {
+            "checked_at": null,
+            "tools": {
+                "brew": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "gh": {
+            "checked_at": null,
+            "tools": {
+                "gh": {
+                    "available": false,
+                    "version": ""
+                },
+                "auth_github_com": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "gcloud": {
+            "checked_at": null,
+            "tools": {
+                "gcloud": {
+                    "available": false,
+                    "version": ""
+                },
+                "auth": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "aws": {
+            "checked_at": null,
+            "tools": {
+                "aws": {
+                    "available": false,
+                    "version": ""
+                },
+                "profile_default": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "python": {
+            "checked_at": null,
+            "tools": {
+                "python3": {
+                    "available": false,
+                    "version": ""
+                },
+                "pip": {
+                    "available": false,
+                    "version": ""
+                },
+                "venv": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "node": {
+            "checked_at": null,
+            "tools": {
+                "node": {
+                    "available": false,
+                    "version": ""
+                },
+                "npm": {
+                    "available": false,
+                    "version": ""
+                },
+                "npx": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        },
+        "yaml": {
+            "checked_at": null,
+            "tools": {
+                "pyyaml": {
+                    "available": false,
+                    "version": ""
+                }
+            }
+        }
+    }
+}

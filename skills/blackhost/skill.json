@@ -1,0 +1,131 @@
+{
+    "schema": {
+        "name": "blackhost.skill",
+        "version": "0.1.0"
+    },
+    "conditionals": {},
+    "blackhost/": {
+        "README.md": "Minimal human-facing overview for installing and discovering the blackhost skill.",
+        "VERSION": "Current blackhost skill release version.",
+        "CHANGELOG.md": "Versioned one-line release log with Version, User, LLM, and 240-character summary entries.",
+        "LICENSE.md": "PolyForm Shield License 1.0.0 with the required Blackaft Associates notice.",
+        "local/": {
+            ".venv/": "Generated blackhost-managed Python virtualenv for local YAML-backed tooling such as skill validation.",
+            "index-server.log": "Generated local status HTTP server log for system-browser index.html review.",
+            "index-server.pid": "Generated local status HTTP server PID used to reuse the browser review server.",
+            "index.json": "Local generated status cache with latest observed host tooling, command result, and terminal output.",
+            "index.html": "Local generated static Bootstrap status view rendered from the latest blackhost command result, including raw assurance/log.txt output at the bottom."
+        },
+        "assurance/": {
+            "dry.sh": "Dry-run assurance runner for commands that preview host or workspace mutation.",
+            "eval.sh": "Top-level assurance runner for static validation, route smoke tests, dry-run checks, stale-path checks, and log generation.",
+            "log.txt": "Overwritten assurance log from the latest dry.sh or eval.sh run."
+        },
+        "manifests/": {
+            "aws.json": "AWS CLI package modules, SSO browser authentication, commands, options, supported hosts, and mutation boundaries.",
+            "core.json": "Core router, host detection, helper modules, root commands, routing grammar, and shared shell dependencies.",
+            "docker.json": "Docker package modules, app scaffolding, local app runs, commands, options, supported hosts, and mutation boundaries.",
+            "homebrew.json": "Homebrew package-manager modules, commands, options, supported hosts, and mutation boundaries.",
+            "git.json": "Git package modules, commands, options, supported hosts, repository context, and mutation boundaries.",
+            "gh.json": "GitHub CLI package modules, browser authentication, commands, options, supported hosts, and mutation boundaries.",
+            "gcloud.json": "Google Cloud CLI package modules, browser authentication, commands, options, supported hosts, and mutation boundaries.",
+            "php.json": "PHP package modules, Composer integration, commands, options, supported hosts, and mutation boundaries.",
+            "node.json": "Node.js package modules, npm/npx integration, local app runs, commands, options, supported hosts, and mutation boundaries.",
+            "python.json": "Python package modules, pip integration, local static server runs, commands, options, supported hosts, and mutation boundaries.",
+            "yaml.json": "YAML package modules, PyYAML integration, commands, options, supported hosts, and mutation boundaries."
+        },
+        "scripts/": {
+            "aws/": {
+                "auth.sh": "AWS CLI SSO browser authentication command that guides user validation and checks final identity status.",
+                "check.sh": "AWS CLI readiness command that checks CLI availability and caller identity resolution.",
+                "install.sh": "AWS CLI v2 installation command for supported macOS and Linux hosts with prompts and dry-run support.",
+                "commons.sh": "AWS CLI common helpers for CLI availability, version output, caller identity checks, and identity diagnostics.",
+                "update.sh": "AWS CLI v2 update command with prompts and dry-run support."
+            },
+            "core/": {
+                "helpers/": "Shared shell helpers for path resolution, OS detection, convention-based package routing, terminal messaging, prompts, dry-run command execution, JSON result output, local index rendering, and temporary file cleanup.",
+                "init.sh": "Root blackhost CLI entrypoint that bootstraps the shared runtime and routes discovered package commands."
+            },
+            "docker/": {
+                "check.sh": "Docker readiness command that checks CLI availability, daemon reachability, Compose, Buildx, runtime smoke, and disk usage.",
+                "dockerise.sh": "Docker scaffold command that writes Docker deployment files into a target app directory with prompts, dry-run support, and overwrite protection.",
+                "install.sh": "Docker installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Docker common helpers for CLI availability, daemon reachability, Compose, Buildx, host guidance, and daemon waiting.",
+                "run.sh": "Docker local app run command that builds, starts, maps, and optionally opens a Dockerised target app.",
+                "update.sh": "Docker update command for supported macOS and Debian-like Linux hosts with prompts, dry-run support, diagnostics, and optional cleanup."
+            },
+            "git/": {
+                "check.sh": "Git readiness command that checks Git CLI availability and optional repository/global identity details.",
+                "install.sh": "Git installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Git common helpers for CLI availability, version output, repository context, and global identity checks.",
+                "update.sh": "Git update command for supported macOS and Debian-like Linux hosts with prompts and dry-run support."
+            },
+            "gh/": {
+                "auth.sh": "GitHub CLI browser authentication command that guides user validation and checks final auth status.",
+                "check.sh": "GitHub CLI readiness command that checks gh availability and authentication status.",
+                "install.sh": "GitHub CLI installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "GitHub CLI common helpers for CLI availability, version output, and auth status checks.",
+                "update.sh": "GitHub CLI update command for supported macOS and Debian-like Linux hosts with prompts and dry-run support."
+            },
+            "gcloud/": {
+                "auth.sh": "Google Cloud CLI browser authentication command that guides user validation and checks final active account status.",
+                "check.sh": "Google Cloud CLI readiness command that checks CLI availability and active authentication status.",
+                "install.sh": "Google Cloud CLI installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Google Cloud CLI common helpers for CLI availability, version output, active account checks, and config diagnostics.",
+                "update.sh": "Google Cloud CLI update command for supported macOS and Debian-like Linux hosts with prompts and dry-run support."
+            },
+            "homebrew/": {
+                "check.sh": "Homebrew readiness command that checks package-manager availability and optional diagnostics.",
+                "install.sh": "Homebrew installation command for supported macOS and Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Homebrew common helpers for CLI availability, version output, and prefix diagnostics.",
+                "update.sh": "Homebrew update command that runs brew update and brew upgrade with prompts and dry-run support."
+            },
+            "php/": {
+                "check.sh": "PHP readiness command that checks PHP CLI, Composer, common extensions, inline runtime execution, and optional configuration details.",
+                "install.sh": "PHP and Composer installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "PHP and Composer common helpers for CLI availability, versions, PHP ini, and extension checks.",
+                "run.sh": "PHP local app run command that starts a background PHP development server and optionally opens it in a browser.",
+                "update.sh": "PHP and Composer update command for supported macOS and Debian-like Linux hosts with prompts, dry-run support, and diagnostics."
+            },
+            "python/": {
+                "check.sh": "Python readiness command that checks Python 3, pip, standard modules, inline runtime execution, and optional configuration details.",
+                "install.sh": "Python and pip installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Python and pip common helpers for CLI availability, pip, venv, executable details, and module checks.",
+                "run.sh": "Python local static app run command that starts a background http.server process and optionally opens it in a browser.",
+                "update.sh": "Python and pip update command for supported macOS and Debian-like Linux hosts with prompts, dry-run support, and diagnostics."
+            },
+            "yaml/": {
+                "check.sh": "YAML readiness command that checks python3, pip, and PyYAML import availability.",
+                "install.sh": "PyYAML installation command for the blackhost-managed virtualenv with prompts and dry-run support.",
+                "commons.sh": "YAML common helpers for python3, pip, and PyYAML availability and version checks.",
+                "run.sh": "YAML parse command that validates a YAML file through PyYAML.",
+                "update.sh": "PyYAML update command for the blackhost-managed virtualenv with prompts and dry-run support."
+            },
+            "node/": {
+                "check.sh": "Node.js readiness command that checks Node.js, npm, npx, inline runtime execution, and optional npm configuration details.",
+                "install.sh": "Node.js, npm, and npx installation command for supported macOS and Debian-like Linux hosts with prompts and dry-run support.",
+                "commons.sh": "Node.js common helpers for CLI availability, versions, package script detection, and package script validation.",
+                "run.sh": "Node.js local app run command that starts a background npm package script process and optionally opens it in a browser.",
+                "update.sh": "Node.js, npm, and npx update command for supported macOS and Debian-like Linux hosts with prompts, dry-run support, and diagnostics."
+            }
+        },
+        "templates/": {
+            ".gitignore": "Reusable generated-state ignore template for blackhost local index, HTML status, and assurance log artifacts.",
+            "index.json": "Reusable local status index template for generated per-user blackhost state.",
+            "manifest.json": "Reusable package manifest template with the canonical top-level manifest structure.",
+            "scripts/": {
+                "auth.sh": "Reusable package browser-authentication command template with prompts and dry-run support.",
+                "check.sh": "Reusable package readiness command template.",
+                "install.sh": "Reusable package installation command template with prompts and dry-run support.",
+                "commons.sh": "Reusable package commons helper template.",
+                "run.sh": "Reusable package run command template with prompts and dry-run support.",
+                "update.sh": "Reusable package update command template with prompts and dry-run support."
+            }
+        },
+        "schemas/": {
+            "eval.json": "Deterministic checks and principles for using and updating the blackhost skill.",
+            "maintain.json": "Deterministic maintenance process for package, routing, schema, and assurance changes.",
+            "skill.openapi.yml": "OpenAPI 3.1 style projection of the public blackhost command surface."
+        }
+    }
+}

@@ -1,0 +1,326 @@
+{
+    "schema": {
+        "name": "blackhost.eval",
+        "version": "0.1.0"
+    },
+    "summary": "Deterministic evaluation rules for using and updating the blackhost skill.",
+    "categories": {
+        "using_this_skill": {
+            "purpose": "Checks an agent should run mentally or mechanically before presenting or executing blackhost capabilities.",
+            "principles": [
+                {
+                    "id": "using.specificity",
+                    "name": "Specificity",
+                    "rule": "Use package manifests as deterministic capability contracts; use CLI discovery only for executable routing."
+                },
+                {
+                    "id": "using.host_respect",
+                    "name": "Host respect",
+                    "rule": "Respect the user's existing host setup and avoid hidden host mutations."
+                },
+                {
+                    "id": "using.cli_boundary",
+                    "name": "CLI boundary",
+                    "rule": "Treat blackhost_* functions as internal shell APIs and scripts/core/init.sh as the public CLI entrypoint."
+                }
+            ],
+            "checks": [
+                {
+                    "id": "using.load_index",
+                    "summary": "Load skill.json once the user moves past presentation.",
+                    "deterministic_action": "Read skill.json before choosing package-specific files or commands.",
+                    "passes_when": "The agent can name the relevant manifest and command surface from skill.json."
+                },
+                {
+                    "id": "using.inspect_local_index",
+                    "summary": "Inspect local generated status before rerunning host checks.",
+                    "deterministic_action": "If local/index.json exists, read it before running dependency checks that might duplicate recent work.",
+                    "passes_when": "The agent can state the latest recorded command, host, package versions, and whether the local index is stale for the current decision."
+                },
+                {
+                    "id": "using.visual_review_local_index",
+                    "summary": "Open local status HTML through localhost in the system default browser.",
+                    "deterministic_action": "Serve .agents/skills/blackhost/local over 127.0.0.1 and trigger the system default browser for http://localhost:<port>/index.html instead of using file:// navigation or the Codex in-app browser.",
+                    "passes_when": "The system default browser is reviewing the generated status page over localhost and any temporary server is stopped when no longer needed."
+                },
+                {
+                    "id": "using.load_package_manifest",
+                    "summary": "Load the package manifest before package-specific work.",
+                    "deterministic_action": "Read manifests/<package>.json before editing or executing package scripts.",
+                    "passes_when": "The agent's action uses the manifest-declared commands, modules, dependencies, and safety metadata."
+                },
+                {
+                    "id": "using.map_meta_prompt",
+                    "summary": "Map natural-language meta prompts to canonical commands.",
+                    "deterministic_action": "When the user invokes a blackhost meta prompt such as blackhost run php app, map it to the matching command in SKILL.md before executing through scripts/core/init.sh.",
+                    "passes_when": "The agent can name both the user-facing meta prompt and the canonical package command it selected."
+                },
+                {
+                    "id": "using.no_hidden_mutation",
+                    "summary": "Do not mutate the host or workspace without an explicit command path.",
+                    "deterministic_action": "Check the selected command's mutates_host and mutates_workspace values before execution.",
+                    "passes_when": "Mutating commands prompt unless the user requested --yes or an equivalent explicit confirmation."
+                },
+                {
+                    "id": "using.dry_run_first",
+                    "summary": "Prefer dry-run for install, update, and scaffold flows during review.",
+                    "deterministic_action": "Use --dry-run for supported mutating or file-generating commands unless the user clearly asked to apply changes.",
+                    "passes_when": "The command prints intended operations without applying them."
+                },
+                {
+                    "id": "using.dry_run_no_short_circuit",
+                    "summary": "Dry-run should expose the planned host path.",
+                    "deterministic_action": "When --dry-run is supported, keep evaluating the detected host branch even if tooling is already installed or currently missing.",
+                    "passes_when": "The dry-run output includes the package-manager commands that would be run for the detected host."
+                },
+                {
+                    "id": "using.json_for_loops",
+                    "summary": "Use JSON output for machine-readable command status.",
+                    "deterministic_action": "Add --json when an agent needs to branch on command success, failure, package, command, host, or dry-run state.",
+                    "passes_when": "The command appends a blackhost.result object and the agent does not scrape prose for those fields."
+                }
+            ]
+        },
+        "updating_this_skill": {
+            "purpose": "Checks an agent should satisfy when changing blackhost architecture, packages, scripts, or schemas.",
+            "principles": [
+                {
+                    "id": "updating.efficiency",
+                    "name": "Efficiency",
+                    "rules": [
+                        "Keep skill.json as a lightweight index for agent ingestion.",
+                        "Keep repeatable and predictable workflow steps in deterministic scripts."
+                    ]
+                },
+                {
+                    "id": "updating.compatibility",
+                    "name": "Compatibility",
+                    "rules": [
+                        "Use established specifications such as JSON-RPC 2.0, MCP, and OpenAPI where applicable, with lightweight extensions for execution and dependency metadata.",
+                        "Keep shell scripts compatible with macOS default Bash 3.x and modern Bash on Debian/Ubuntu."
+                    ]
+                }
+            ],
+            "checks": [
+                {
+                    "id": "updating.maintenance_process",
+                    "summary": "Maintenance work follows schemas/maintain.json.",
+                    "deterministic_action": "Read schemas/maintain.json and apply its ordered process when changing packages, routing, schemas, templates, or assurance.",
+                    "passes_when": "The change updates runtime, contracts, schemas, and assurance in the order required by schemas/maintain.json."
+                },
+                {
+                    "id": "updating.frontmatter",
+                    "summary": "SKILL.md frontmatter reflects public capability changes.",
+                    "deterministic_action": "Update SKILL.md YAML frontmatter description when packages or owned tools change.",
+                    "passes_when": "The frontmatter names every public package/tool family exposed by the skill."
+                },
+                {
+                    "id": "updating.architecture_diagram",
+                    "summary": "SKILL.md Mermaid diagram reflects package architecture.",
+                    "deterministic_action": "Update Mermaid nodes when adding or removing package manifests or changing the routing model.",
+                    "passes_when": "The diagram includes new package manifests and still shows skill.json, core routing, package scripts, and host effects."
+                },
+                {
+                    "id": "updating.package_manifest",
+                    "summary": "Every package has a canonical manifest.",
+                    "deterministic_action": "Create or update manifests/<package>.json from templates/manifest.json.",
+                    "passes_when": "The package manifest has the same top-level key order as core.json: script, summary, modules_dir, modules, commands, routing, dependencies, safety, notes."
+                },
+                {
+                    "id": "updating.package_scripts",
+                    "summary": "Package scripts follow the standard module shape.",
+                    "deterministic_action": "Use templates/scripts/*.sh when creating commons, check, install, update, or scaffold modules.",
+                    "passes_when": "Scripts expose blackhost_<package>_* functions and can be loaded by scripts/core/helpers/run.sh."
+                },
+                {
+                    "id": "updating.dry_run_semantics",
+                    "summary": "Dry-run behavior is consistent across packages and templates.",
+                    "deterministic_action": "Install/update scripts that support --dry-run must print the detected install/update command path without executing it, including when tooling is already installed or currently missing.",
+                    "passes_when": "Dry-run commands exit after printing planned commands and do not depend on the target tooling being absent or present."
+                },
+                {
+                    "id": "updating.router",
+                    "summary": "Core router exposes the package command surface.",
+                    "deterministic_action": "Preserve convention-based routing from scripts/<package>/*.sh to blackhost_<package>_<command> functions.",
+                    "passes_when": "scripts/core/init.sh <package> --help exits 0, lists commands discovered from scripts/<package>/, and does not require package-specific router case blocks."
+                },
+                {
+                    "id": "updating.core_manifest",
+                    "summary": "Core manifest reflects router changes.",
+                    "deterministic_action": "Update manifests/core.json functions, package list, routing packages, and command grammar.",
+                    "passes_when": "The package appears under commands.package.packages and routing.packages."
+                },
+                {
+                    "id": "updating.skill_index",
+                    "summary": "Skill index reflects current files and schemas.",
+                    "deterministic_action": "Update skill.json manifest summaries, script summaries, templates, schemas, and eval references.",
+                    "passes_when": "skill.json has no placeholders and points to schemas/eval.json."
+                },
+                {
+                    "id": "updating.version_file",
+                    "summary": "Skill version is explicit and semver-compatible.",
+                    "deterministic_action": "Update VERSION when behavior, public capability, routing, schemas, templates, assurance, licensing, or generated-state contracts change, then add a matching CHANGELOG.md row.",
+                    "command": "test -f .agents/skills/blackhost/VERSION && grep -Eq '^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$' .agents/skills/blackhost/VERSION",
+                    "passes_when": "VERSION exists and contains exactly one semantic version string, including optional prerelease suffix."
+                },
+                {
+                    "id": "updating.changelog_file",
+                    "summary": "Current version has a deterministic changelog row.",
+                    "deterministic_action": "Add one CHANGELOG.md row for the current VERSION with Version, User, LLM, and a summary of 240 characters or fewer.",
+                    "command": "test -f .agents/skills/blackhost/CHANGELOG.md && ruby -e 'version=File.read(\".agents/skills/blackhost/VERSION\").strip; lines=File.readlines(\".agents/skills/blackhost/CHANGELOG.md\", chomp: true); header=lines.find { |line| line.start_with?(\"| Version | User | LLM | 240-Char Summary |\") }; raise \"missing changelog header\" unless header; row=lines.find { |line| line.start_with?(\"| #{version} |\") }; raise \"missing changelog row for #{version}\" unless row; cells=row.split(\"|\").map(&:strip).reject(&:empty?); raise \"expected Version/User/LLM/240-Char Summary\" unless cells.length == 4; raise \"summary too long\" if cells[3].length > 240'",
+                    "passes_when": "CHANGELOG.md has one current-version row with exactly four populated cells and a summary no longer than 240 characters."
+                },
+                {
+                    "id": "updating.license_file",
+                    "summary": "Skill licensing is explicit.",
+                    "deterministic_action": "Keep LICENSE.md with the selected license text and required licensor notice.",
+                    "command": "test -f .agents/skills/blackhost/LICENSE.md && rg -q '^Required Notice: Copyright Blackaft Associates \\(associates@blackaft\\.com\\)$' .agents/skills/blackhost/LICENSE.md",
+                    "passes_when": "LICENSE.md exists and includes the required Blackaft Associates notice."
+                },
+                {
+                    "id": "updating.local_index_visual_review_instruction",
+                    "summary": "System default browser review path for local/index.html stays explicit and routed.",
+                    "deterministic_action": "Keep SKILL.md explicit that routed commands open local/index.html over localhost in the system default browser, while assurance disables repeated browser openings.",
+                    "command": "rg -q 'Every routed command refreshes' .agents/skills/blackhost/SKILL.md && rg -q 'python3 -m webbrowser http://localhost:8765/index\\.html' .agents/skills/blackhost/SKILL.md && rg -q 'system default browser' .agents/skills/blackhost/SKILL.md && rg -q 'file://' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost_index_open_html' .agents/skills/blackhost/scripts/core/helpers/run.sh && rg -q 'BLACKHOST_OPEN_INDEX=false' .agents/skills/blackhost/assurance/eval.sh && rg -q 'BLACKHOST_OPEN_INDEX=false' .agents/skills/blackhost/assurance/dry.sh",
+                    "passes_when": "SKILL.md contains the default-browser command, localhost status page URL, file:// avoidance note, and the router calls the status-page opener with assurance disabled."
+                },
+                {
+                    "id": "updating.meta_prompt_table",
+                    "summary": "Capability table includes explicit meta prompts.",
+                    "deterministic_action": "Keep the SKILL.md capabilities table explicit about natural-language meta prompts and their canonical command mapping.",
+                    "command": "rg -q '\\| Capability \\| Meta Prompt \\| Command \\| Manifest \\| Mutates host \\|' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost run php app' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost install docker' .agents/skills/blackhost/SKILL.md",
+                    "passes_when": "SKILL.md exposes the Meta Prompt column and representative package mappings."
+                },
+                {
+                    "id": "updating.no_unresolved_todos",
+                    "summary": "Skill instructions do not contain unresolved TODO notes.",
+                    "deterministic_action": "Remove unresolved TODO markers from SKILL.md before completion.",
+                    "command": "if rg -n 'TODO|FIXME' .agents/skills/blackhost/SKILL.md; then exit 1; fi",
+                    "passes_when": "No TODO or FIXME markers remain in SKILL.md."
+                },
+                {
+                    "id": "updating.openapi_projection",
+                    "summary": "OpenAPI projection reflects public operation changes.",
+                    "deterministic_action": "Update schemas/skill.openapi.yml when adding, removing, or renaming public commands.",
+                    "passes_when": "The YAML parses and exposes paths for each public operation."
+                },
+                {
+                    "id": "updating.static_validation",
+                    "summary": "Static files parse and shell scripts compile.",
+                    "commands": [
+                        "python3 -m json.tool .agents/skills/blackhost/skill.json >/dev/null",
+                        "python3 -m json.tool .agents/skills/blackhost/schemas/maintain.json >/dev/null",
+                        "python3 -m json.tool .agents/skills/blackhost/schemas/eval.json >/dev/null",
+                        "for file in .agents/skills/blackhost/manifests/*.json .agents/skills/blackhost/templates/*.json; do python3 -m json.tool \"$file\" >/dev/null || exit 1; done",
+                        "ruby -ryaml -e 'YAML.load_file(\".agents/skills/blackhost/schemas/skill.openapi.yml\")'",
+                        "test -f .agents/skills/blackhost/VERSION && grep -Eq '^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$' .agents/skills/blackhost/VERSION",
+                        "test -f .agents/skills/blackhost/CHANGELOG.md && ruby -e 'version=File.read(\".agents/skills/blackhost/VERSION\").strip; lines=File.readlines(\".agents/skills/blackhost/CHANGELOG.md\", chomp: true); header=lines.find { |line| line.start_with?(\"| Version | User | LLM | 240-Char Summary |\") }; raise \"missing changelog header\" unless header; row=lines.find { |line| line.start_with?(\"| #{version} |\") }; raise \"missing changelog row for #{version}\" unless row; cells=row.split(\"|\").map(&:strip).reject(&:empty?); raise \"expected Version/User/LLM/240-Char Summary\" unless cells.length == 4; raise \"summary too long\" if cells[3].length > 240'",
+                        "test -f .agents/skills/blackhost/LICENSE.md && rg -q '^Required Notice: Copyright Blackaft Associates \\(associates@blackaft\\.com\\)$' .agents/skills/blackhost/LICENSE.md",
+                        "ruby -ryaml -e 'front=File.read(\".agents/skills/blackhost/SKILL.md\").split(\"---\",3)[1]; desc=YAML.safe_load(front).fetch(\"description\"); [\"AWS CLI\", \"Google Cloud CLI\", \"Homebrew\", \"Node.js\"].each { |needle| raise \"frontmatter missing #{needle}\" unless desc.include?(needle) }'",
+                        "rg -q 'Every routed command refreshes' .agents/skills/blackhost/SKILL.md && rg -q 'python3 -m webbrowser http://localhost:8765/index\\.html' .agents/skills/blackhost/SKILL.md && rg -q 'system default browser' .agents/skills/blackhost/SKILL.md && rg -q 'file://' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost_index_open_html' .agents/skills/blackhost/scripts/core/helpers/run.sh && rg -q 'BLACKHOST_OPEN_INDEX=false' .agents/skills/blackhost/assurance/eval.sh && rg -q 'BLACKHOST_OPEN_INDEX=false' .agents/skills/blackhost/assurance/dry.sh",
+                        "rg -q '\\| Capability \\| Meta Prompt \\| Command \\| Manifest \\| Mutates host \\|' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost run php app' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost install docker' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost auth aws' .agents/skills/blackhost/SKILL.md && rg -q 'blackhost install homebrew' .agents/skills/blackhost/SKILL.md",
+                        "ruby -rjson -e 'root=\".agents/skills/blackhost\"; packages=Dir.children(File.join(root,\"scripts\")).select { |name| File.directory?(File.join(root,\"scripts\",name)) && name != \"core\" }.sort; required=%w[script summary modules_dir modules commands routing dependencies safety notes]; skill=JSON.parse(File.read(File.join(root,\"skill.json\"))).fetch(\"blackhost/\"); scripts=skill.fetch(\"scripts/\"); core=JSON.parse(File.read(File.join(root,\"manifests/core.json\"))); core_packages=core.fetch(\"commands\").fetch(\"package\").fetch(\"packages\"); routing=core.fetch(\"routing\").fetch(\"packages\"); packages.each { |package| manifest_path=File.join(root,\"manifests\",\"#{package}.json\"); raise \"missing manifest for #{package}\" unless File.file?(manifest_path); manifest=JSON.parse(File.read(manifest_path)); missing=required.reject { |key| manifest.key?(key) }; raise \"#{package} manifest missing #{missing.join(\", \")}\" unless missing.empty?; raise \"skill.json missing scripts/#{package}/\" unless scripts.key?(\"#{package}/\"); raise \"core package list missing #{package}\" unless core_packages.include?(package); raise \"core routing missing #{package}\" unless routing.key?(package) }'",
+                        "ruby -ryaml -e 'root=\".agents/skills/blackhost\"; api=YAML.load_file(File.join(root,\"schemas/skill.openapi.yml\")); enum=api.fetch(\"paths\").fetch(\"/manifests/{manifestName}\").fetch(\"get\").fetch(\"parameters\")[0].fetch(\"schema\").fetch(\"enum\"); paths=api.fetch(\"paths\").keys; manifests=api.fetch(\"x-blackhost\").fetch(\"manifests\"); filesystem_manifests=api.fetch(\"x-blackhost\").fetch(\"filesystem\").fetch(\"blackhost/\").fetch(\"manifests/\"); packages=Dir.children(File.join(root,\"scripts\")).select { |name| File.directory?(File.join(root,\"scripts\",name)) && name != \"core\" }.sort; packages.each { |package| raise \"#{package} missing from manifest enum\" unless enum.include?(package); raise \"#{package} missing from x-blackhost manifests\" unless manifests.key?(package); raise \"#{package}.json missing from x-blackhost filesystem map\" unless filesystem_manifests.key?(\"#{package}.json\"); Dir.children(File.join(root,\"scripts\",package)).grep(/\\.sh$/).map { |file| File.basename(file,\".sh\") }.reject { |cmd| cmd == \"commons\" }.sort.each { |command| path=\"/packages/#{package}/#{command}\"; raise \"missing #{path}\" unless paths.include?(path) } }'",
+                        "if rg -n 'TODO|FIXME' .agents/skills/blackhost/SKILL.md; then exit 1; fi",
+                        "for file in $(find .agents/skills/blackhost -path .agents/skills/blackhost/local -prune -o -type f -name \"*.sh\" -print | sort); do bash -n \"$file\" || exit 1; done"
+                    ],
+                    "passes_when": "All commands exit 0."
+                },
+                {
+                    "id": "updating.route_smoke",
+                    "summary": "Public routing still works.",
+                    "commands": [
+                        "bash .agents/skills/blackhost/scripts/core/init.sh --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh os",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws auth --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker dockerise --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker run --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gcloud --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gcloud auth --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh git --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gh --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gh auth --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh homebrew --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh php --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh php run --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh python --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh python run --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh node --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh node check --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh node run --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh yaml --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh yaml run --help",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh docker update --dry-run --yes --prune",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws auth --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws auth --profile default --configure --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh aws update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gcloud auth --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gcloud install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gcloud update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh git install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh git update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gh auth --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gh install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh gh update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh homebrew install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh homebrew update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh php install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh php run apps/site --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh php update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh python install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh python run apps/site --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh python update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh node install --dry-run --yes",
+                        "tmp=$(mktemp -d); printf '{\"scripts\":{\"dev\":\"node -e \\\\\"setInterval(function(){}, 1000)\\\\\"\"}}\\n' >\"$tmp/package.json\"; bash .agents/skills/blackhost/scripts/core/init.sh node run \"$tmp\" --port 8093 --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh node update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh yaml install --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh yaml update --dry-run --yes",
+                        "bash .agents/skills/blackhost/scripts/core/init.sh yaml run .agents/skills/blackhost/SKILL.md --dry-run --yes"
+                    ],
+                    "passes_when": "All commands exit 0."
+                },
+                {
+                    "id": "updating.local_index",
+                    "summary": "Local index artifacts render after command runs.",
+                    "command": "bash .agents/skills/blackhost/scripts/core/init.sh --json os >/dev/null && python3 -m json.tool .agents/skills/blackhost/local/index.json >/dev/null && python3 -c 'import json, sys; data=json.load(open(sys.argv[1])); packages=data[\"packages\"]; assert all(name in packages[\"node\"][\"tools\"] for name in (\"node\", \"npm\", \"npx\")); assert \"aws\" in packages and \"aws\" in packages[\"aws\"][\"tools\"]; assert \"gcloud\" in packages and \"gcloud\" in packages[\"gcloud\"][\"tools\"]; assert \"homebrew\" in packages and \"brew\" in packages[\"homebrew\"][\"tools\"]' .agents/skills/blackhost/local/index.json && test -f .agents/skills/blackhost/local/index.html && rg -q '<td>Node.js</td><td>node</td>' .agents/skills/blackhost/local/index.html && rg -q '<td>AWS CLI</td><td>aws</td>' .agents/skills/blackhost/local/index.html && rg -q '<td>Google Cloud CLI</td><td>gcloud</td>' .agents/skills/blackhost/local/index.html && rg -q '<td>Homebrew</td><td>brew</td>' .agents/skills/blackhost/local/index.html",
+                    "passes_when": "local/index.json parses, local/index.html exists, and Node.js/npm/npx, AWS CLI, Google Cloud CLI, and Homebrew appear in generated local status artifacts after a routed command."
+                },
+                {
+                    "id": "updating.local_index_assurance_log",
+                    "summary": "Local status HTML includes the latest assurance log section.",
+                    "command": "bash .agents/skills/blackhost/scripts/core/init.sh --json os >/dev/null && rg -q '<h2 class=\"h5\">Assurance Log</h2>' .agents/skills/blackhost/local/index.html && rg -q 'assurance/log.txt' .agents/skills/blackhost/local/index.html",
+                    "passes_when": "local/index.html contains a readable raw assurance log section after a routed command."
+                },
+                {
+                    "id": "updating.assurance_log",
+                    "summary": "Assurance log is overwritten on each assurance run.",
+                    "command": "bash .agents/skills/blackhost/assurance/eval.sh >/dev/null && test -s .agents/skills/blackhost/assurance/log.txt",
+                    "passes_when": "assurance/log.txt exists and is non-empty after assurance/eval.sh."
+                },
+                {
+                    "id": "updating.assurance_eval",
+                    "summary": "Executable assurance passes.",
+                    "command": "bash .agents/skills/blackhost/assurance/eval.sh",
+                    "passes_when": "The command exits 0."
+                },
+                {
+                    "id": "updating.skill_creator_validator",
+                    "summary": "Skill creator validator passes when the blackhost YAML venv is installed.",
+                    "command": "test ! -x .agents/skills/blackhost/local/.venv/bin/python || .agents/skills/blackhost/local/.venv/bin/python /Users/geogkary/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/blackhost",
+                    "passes_when": "The command exits 0; fresh checkouts without the generated venv skip this local-only validator."
+                },
+                {
+                    "id": "updating.no_stale_shortcuts",
+                    "summary": "Removed shortcut and state-module architecture stays removed.",
+                    "command": "if rg -n \"scripts/docker\\.sh|state\\.sh\" .agents/skills/blackhost --glob '!schemas/eval.json' --glob '!assurance/eval.sh' --glob '!assurance/log.txt' --glob '!local/**'; then exit 1; fi",
+                    "passes_when": "The command exits 0 with no matches."
+                }
+            ]
+        }
+    }
+}
