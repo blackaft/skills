@@ -1,9 +1,45 @@
+# General
 .agents/*
+!.agents/skills/
+!.agents/skills/.gitkeep
 .humans/*
 !.gitkeep
-.DS_Store
-
-__pycache__/
-.venv
-node_modules
 skills-lock.json
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environments
+.env
+.env.*
+!.env.example
+coverage/
+dist/
+build/
+tmp/
+temp/
+
+# Environment: Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Environment: Node, JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Skills: Blackhost
+skills/blackhost/local/index.json
+skills/blackhost/local/index.html
+skills/blackhost/assurance/log.txt
