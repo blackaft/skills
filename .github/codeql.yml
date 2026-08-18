@@ -1,0 +1,14 @@
+# CodeQL configuration for blackaft/skills.
+# The workflow in .github/workflows/codeql.yml supplies the language matrix.
+
+name: Blackaft Skills CodeQL
+
+queries:
+  - uses: security-extended
+
+paths-ignore:
+  - .git/**
+  - .github/**
+  - .humans/**
+  - '**/local/**'
+  - '**/vendor/**'

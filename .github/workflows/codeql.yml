@@ -1,0 +1,65 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '30 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  detect:
+    name: Detect CodeQL languages
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.languages.outputs.matrix }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Build supported-language matrix
+        id: languages
+        shell: bash
+        run: |
+          matrix='[]'
+
+          if git ls-files | grep -Eq '\.(cjs|js|jsx|mjs|ts|tsx)$'; then
+            matrix="$(jq -c '. + [{"language":"javascript-typescript","build-mode":"none"}]' <<<"$matrix")"
+          fi
+
+          if git ls-files | grep -Eq '\.py$'; then
+            matrix="$(jq -c '. + [{"language":"python","build-mode":"none"}]' <<<"$matrix")"
+          fi
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  analyze:
+    name: CodeQL (${{ matrix.language }})
+    needs: detect
+    if: ${{ needs.detect.outputs.matrix != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.matrix) }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: .github/codeql.yml
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
