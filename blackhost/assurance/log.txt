@@ -1,0 +1,1867 @@
+
+========================================================================
+Blackhost Assurance
+========================================================================
+[INFO] Repository root: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Skill root: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost
+
+========================================================================
+Validate skill.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/skill.json\'\ \>/dev/null
+[PASS] Validate skill.json exited 0
+
+========================================================================
+Validate schemas/maintain.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/schemas/maintain.json\'\ \>/dev/null
+[PASS] Validate schemas/maintain.json exited 0
+
+========================================================================
+Validate schemas/eval.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/schemas/eval.json\'\ \>/dev/null
+[PASS] Validate schemas/eval.json exited 0
+
+========================================================================
+Validate aws.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/aws.json\'\ \>/dev/null
+[PASS] Validate aws.json exited 0
+
+========================================================================
+Validate core.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/core.json\'\ \>/dev/null
+[PASS] Validate core.json exited 0
+
+========================================================================
+Validate docker.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/docker.json\'\ \>/dev/null
+[PASS] Validate docker.json exited 0
+
+========================================================================
+Validate gcloud.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/gcloud.json\'\ \>/dev/null
+[PASS] Validate gcloud.json exited 0
+
+========================================================================
+Validate gh.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/gh.json\'\ \>/dev/null
+[PASS] Validate gh.json exited 0
+
+========================================================================
+Validate git.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/git.json\'\ \>/dev/null
+[PASS] Validate git.json exited 0
+
+========================================================================
+Validate homebrew.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/homebrew.json\'\ \>/dev/null
+[PASS] Validate homebrew.json exited 0
+
+========================================================================
+Validate node.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/node.json\'\ \>/dev/null
+[PASS] Validate node.json exited 0
+
+========================================================================
+Validate php.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/php.json\'\ \>/dev/null
+[PASS] Validate php.json exited 0
+
+========================================================================
+Validate python.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/python.json\'\ \>/dev/null
+[PASS] Validate python.json exited 0
+
+========================================================================
+Validate yaml.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/manifests/yaml.json\'\ \>/dev/null
+[PASS] Validate yaml.json exited 0
+
+========================================================================
+Validate index.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/index.json\'\ \>/dev/null
+[PASS] Validate index.json exited 0
+
+========================================================================
+Validate manifest.json
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/manifest.json\'\ \>/dev/null
+[PASS] Validate manifest.json exited 0
+
+========================================================================
+Validate package manifests match package directories
+========================================================================
+[INFO] Command: ruby -rjson -e $'\nroot=\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost\'\npackages=Dir.children(File.join(root,\'scripts\')).select { |name| File.directory?(File.join(root,\'scripts\',name)) && name != \'core\' }.sort\nrequired=%w[script summary modules_dir modules commands routing dependencies safety notes]\nskill=JSON.parse(File.read(File.join(root,\'skill.json\'))).fetch(\'blackhost/\')\nscripts=skill.fetch(\'scripts/\')\ncore=JSON.parse(File.read(File.join(root,\'manifests/core.json\')))\ncore_packages=core.fetch(\'commands\').fetch(\'package\').fetch(\'packages\')\nrouting=core.fetch(\'routing\').fetch(\'packages\')\npackages.each do |package|\n  manifest_path=File.join(root,\'manifests\',"#{package}.json")\n  raise "missing manifest for #{package}" unless File.file?(manifest_path)\n  manifest=JSON.parse(File.read(manifest_path))\n  missing=required.reject { |key| manifest.key?(key) }\n  raise "#{package} manifest missing #{missing.join(\', \')}" unless missing.empty?\n  raise "skill.json missing scripts/#{package}/" unless scripts.key?("#{package}/")\n  raise "core package list missing #{package}" unless core_packages.include?(package)\n  raise "core routing missing #{package}" unless routing.key?(package)\nend\n'
+[PASS] Validate package manifests match package directories exited 0
+
+========================================================================
+Validate OpenAPI YAML
+========================================================================
+[INFO] Command: ruby -ryaml -e YAML.load_file\(\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/schemas/skill.openapi.yml\'\)
+[PASS] Validate OpenAPI YAML exited 0
+
+========================================================================
+Validate VERSION
+========================================================================
+[INFO] Command: sh -c test\ -f\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/VERSION\'\ \&\&\ grep\ -Eq\ \'\^\[0-9\]+\\.\[0-9\]+\\.\[0-9\]+\(-\[0-9A-Za-z.-\]+\)\?\$\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/VERSION\'
+[PASS] Validate VERSION exited 0
+
+========================================================================
+Validate CHANGELOG.md current version row
+========================================================================
+[INFO] Command: ruby -e $'\nversion=File.read(\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/VERSION\').strip\nlines=File.readlines(\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/CHANGELOG.md\', chomp: true)\nheader=lines.find { |line| line.start_with?(\'| Version | User | LLM | 240-Char Summary |\') }\nraise \'missing changelog header\' unless header\nrow=lines.find { |line| line.start_with?("| #{version} |") }\nraise "missing changelog row for #{version}" unless row\ncells=row.split(\'|\').map(&:strip).reject(&:empty?)\nraise \'expected Version/User/LLM/240-Char Summary\' unless cells.length == 4\nraise \'summary too long\' if cells[3].length > 240\n'
+[PASS] Validate CHANGELOG.md current version row exited 0
+
+========================================================================
+Validate LICENSE.md required notice
+========================================================================
+[INFO] Command: sh -c test\ -f\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/LICENSE.md\'\ \&\&\ rg\ -q\ \'\^Required\ Notice:\ Copyright\ Blackaft\ Associates\ \\\(associates@blackaft\\.com\\\)\$\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/LICENSE.md\'
+[PASS] Validate LICENSE.md required notice exited 0
+
+========================================================================
+Validate local/index.html default browser route
+========================================================================
+[INFO] Command: sh -c rg\ -q\ \'Every\ routed\ command\ refreshes\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'python3\ -m\ webbrowser\ http://localhost:8765/index\\.html\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'system\ default\ browser\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'file://\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'blackhost_index_open_html\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/helpers/run.sh\'\ \&\&\ rg\ -q\ \'BLACKHOST_OPEN_INDEX=false\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/eval.sh\'\ \&\&\ rg\ -q\ \'BLACKHOST_OPEN_INDEX=false\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/dry.sh\'
+[PASS] Validate local/index.html default browser route exited 0
+
+========================================================================
+Validate meta prompt capability table
+========================================================================
+[INFO] Command: sh -c rg\ -q\ \'\\\|\ Capability\ \\\|\ Meta\ Prompt\ \\\|\ Command\ \\\|\ Manifest\ \\\|\ Mutates\ host\ \\\|\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'blackhost\ run\ php\ app\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\ \&\&\ rg\ -q\ \'blackhost\ install\ docker\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'
+[PASS] Validate meta prompt capability table exited 0
+
+========================================================================
+Validate SKILL.md package discovery frontmatter
+========================================================================
+[INFO] Command: ruby -ryaml -e front=File.read\(\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\).split\(\'---\'\,3\)\[1\]\;\ desc=YAML.safe_load\(front\).fetch\(\'description\'\)\;\ \[\'AWS\ CLI\'\,\'Google\ Cloud\ CLI\'\,\'Homebrew\'\,\'Node.js\'\].each\ \{\ \|needle\|\ raise\ \"frontmatter\ missing\ #\{needle\}\"\ unless\ desc.include\?\(needle\)\ \}
+[PASS] Validate SKILL.md package discovery frontmatter exited 0
+
+========================================================================
+Validate SKILL.md has no unresolved TODO markers
+========================================================================
+[INFO] Command: sh -c if\ rg\ -n\ \'TODO\|FIXME\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/SKILL.md\'\;\ then\ exit\ 1\;\ fi
+[PASS] Validate SKILL.md has no unresolved TODO markers exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/assurance/dry.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/dry.sh
+[PASS] Shell syntax .agents/skills/blackhost/assurance/dry.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/assurance/eval.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/eval.sh
+[PASS] Shell syntax .agents/skills/blackhost/assurance/eval.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/aws/auth.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/aws/auth.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/aws/auth.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/aws/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/aws/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/aws/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/aws/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/aws/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/aws/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/aws/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/aws/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/aws/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/aws/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/aws/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/aws/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/core/helpers/index.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/helpers/index.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/core/helpers/index.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/core/helpers/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/helpers/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/core/helpers/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/core/helpers/temp.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/helpers/temp.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/core/helpers/temp.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/core/helpers/terminal.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/helpers/terminal.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/core/helpers/terminal.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/core/init.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/core/init.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/dockerise.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/dockerise.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/dockerise.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/docker/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/docker/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/docker/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gcloud/auth.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gcloud/auth.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gcloud/auth.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gcloud/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gcloud/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gcloud/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gcloud/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gcloud/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gcloud/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gcloud/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gcloud/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gcloud/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gcloud/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gcloud/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gcloud/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gh/auth.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gh/auth.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gh/auth.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gh/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gh/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gh/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gh/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gh/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gh/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gh/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gh/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gh/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/gh/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/gh/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/gh/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/git/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/git/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/git/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/git/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/git/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/git/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/git/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/git/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/git/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/git/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/git/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/git/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/homebrew/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/homebrew/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/homebrew/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/homebrew/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/homebrew/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/homebrew/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/homebrew/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/homebrew/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/homebrew/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/homebrew/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/homebrew/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/homebrew/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/node/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/node/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/node/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/node/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/node/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/node/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/node/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/node/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/node/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/node/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/node/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/node/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/node/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/node/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/node/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/php/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/php/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/php/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/php/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/php/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/php/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/php/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/php/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/php/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/php/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/php/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/php/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/php/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/php/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/php/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/python/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/python/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/python/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/python/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/python/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/python/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/python/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/python/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/python/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/python/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/python/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/python/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/python/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/python/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/python/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/yaml/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/yaml/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/yaml/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/yaml/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/yaml/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/yaml/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/yaml/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/yaml/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/yaml/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/yaml/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/yaml/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/yaml/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/scripts/yaml/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/yaml/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/scripts/yaml/update.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/auth.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/auth.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/auth.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/check.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/check.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/check.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/commons.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/commons.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/commons.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/install.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/install.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/install.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/run.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/run.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/run.sh exited 0
+
+========================================================================
+Shell syntax .agents/skills/blackhost/templates/scripts/update.sh
+========================================================================
+[INFO] Command: bash -n /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/templates/scripts/update.sh
+[PASS] Shell syntax .agents/skills/blackhost/templates/scripts/update.sh exited 0
+
+========================================================================
+Root help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh --help
+blackhost
+
+Host setup and configuration helper.
+
+Usage:
+  scripts/core/init.sh [--json] <package> <command> [options]
+  scripts/core/init.sh [--json] <package> --help
+  scripts/core/init.sh [--json] os
+  scripts/core/init.sh [--json] --help
+
+Global options:
+  --json   Append a compact machine-readable result object.
+
+Packages:
+  os       Print detected host OS variables.
+  aws      auth, check, install, update
+  docker   check, dockerise, install, run, update
+  gcloud   auth, check, install, update
+  gh       auth, check, install, update
+  git      check, install, update
+  homebrew check, install, update
+  node     check, install, run, update
+  php      check, install, run, update
+  python   check, install, run, update
+  yaml     check, install, run, update
+
+Examples:
+  scripts/core/init.sh aws auth --dry-run
+  scripts/core/init.sh aws install --dry-run
+  scripts/core/init.sh docker check
+  scripts/core/init.sh docker dockerise apps/site --dry-run
+  scripts/core/init.sh docker run apps/site --open --yes
+  scripts/core/init.sh docker install --dry-run
+  scripts/core/init.sh docker update --prune
+  scripts/core/init.sh gcloud auth --dry-run
+  scripts/core/init.sh gcloud install --dry-run
+  scripts/core/init.sh git check --verbose
+  scripts/core/init.sh gh auth --dry-run
+  scripts/core/init.sh homebrew install --dry-run
+  scripts/core/init.sh php run apps/site --open --yes
+  scripts/core/init.sh node run apps/site --open --yes
+  scripts/core/init.sh python run apps/site --open --yes
+  scripts/core/init.sh yaml install --dry-run
+  scripts/core/init.sh php check --verbose
+  scripts/core/init.sh python check --verbose
+  scripts/core/init.sh --json python check --yes
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Root help exited 0
+
+========================================================================
+Root help JSON
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh --json --help
+blackhost
+
+Host setup and configuration helper.
+
+Usage:
+  scripts/core/init.sh [--json] <package> <command> [options]
+  scripts/core/init.sh [--json] <package> --help
+  scripts/core/init.sh [--json] os
+  scripts/core/init.sh [--json] --help
+
+Global options:
+  --json   Append a compact machine-readable result object.
+
+Packages:
+  os       Print detected host OS variables.
+  aws      auth, check, install, update
+  docker   check, dockerise, install, run, update
+  gcloud   auth, check, install, update
+  gh       auth, check, install, update
+  git      check, install, update
+  homebrew check, install, update
+  node     check, install, run, update
+  php      check, install, run, update
+  python   check, install, run, update
+  yaml     check, install, run, update
+
+Examples:
+  scripts/core/init.sh aws auth --dry-run
+  scripts/core/init.sh aws install --dry-run
+  scripts/core/init.sh docker check
+  scripts/core/init.sh docker dockerise apps/site --dry-run
+  scripts/core/init.sh docker run apps/site --open --yes
+  scripts/core/init.sh docker install --dry-run
+  scripts/core/init.sh docker update --prune
+  scripts/core/init.sh gcloud auth --dry-run
+  scripts/core/init.sh gcloud install --dry-run
+  scripts/core/init.sh git check --verbose
+  scripts/core/init.sh gh auth --dry-run
+  scripts/core/init.sh homebrew install --dry-run
+  scripts/core/init.sh php run apps/site --open --yes
+  scripts/core/init.sh node run apps/site --open --yes
+  scripts/core/init.sh python run apps/site --open --yes
+  scripts/core/init.sh yaml install --dry-run
+  scripts/core/init.sh php check --verbose
+  scripts/core/init.sh python check --verbose
+  scripts/core/init.sh --json python check --yes
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+{"schema":"blackhost.result","version":"0.1.0","package":"core","command":"help","status":"ok","exit_code":0,"dry_run":false,"os":"macos","os_id":"macos","os_pretty":"macOS","arch":"arm64"}
+[PASS] Root help JSON exited 0
+
+========================================================================
+OS route
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh os
+BLACKHOST_OS=macos
+BLACKHOST_OS_FAMILY=darwin
+BLACKHOST_OS_ID=macos
+BLACKHOST_OS_LIKE=
+BLACKHOST_OS_VERSION_CODENAME=
+BLACKHOST_OS_PRETTY=macOS
+BLACKHOST_ARCH=arm64
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] OS route exited 0
+
+========================================================================
+OS route JSON
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh --json os
+BLACKHOST_OS=macos
+BLACKHOST_OS_FAMILY=darwin
+BLACKHOST_OS_ID=macos
+BLACKHOST_OS_LIKE=
+BLACKHOST_OS_VERSION_CODENAME=
+BLACKHOST_OS_PRETTY=macOS
+BLACKHOST_ARCH=arm64
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+{"schema":"blackhost.result","version":"0.1.0","package":"core","command":"os","status":"ok","exit_code":0,"dry_run":false,"os":"macos","os_id":"macos","os_pretty":"macOS","arch":"arm64"}
+[PASS] OS route JSON exited 0
+
+========================================================================
+AWS package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh aws --help
+blackhost aws
+
+Usage:
+  scripts/core/init.sh [--json] aws <command> [options]
+
+Commands:
+  auth
+  check
+  install
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] AWS package help exited 0
+
+========================================================================
+AWS auth help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh aws auth --help
+blackhost aws auth
+
+Starts AWS SSO browser authentication with explicit prompts.
+
+Usage:
+  scripts/core/init.sh [--json] aws auth [--profile default] [--configure] [--dry-run] [--yes]
+
+Options:
+  --json           Append a compact machine-readable result object.
+  --profile VALUE  AWS profile to authenticate. Defaults to default.
+  --configure      Run aws configure sso instead of aws sso login.
+  --dry-run        Print the browser auth command without executing it.
+  -y, --yes        Skip confirmation prompts.
+  -h, --help       Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] AWS auth help exited 0
+
+========================================================================
+Docker package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh docker --help
+blackhost docker
+
+Usage:
+  scripts/core/init.sh [--json] docker <command> [options]
+
+Commands:
+  check
+  dockerise
+  install
+  run
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Docker package help exited 0
+
+========================================================================
+Dockerise help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh docker dockerise --help
+blackhost docker dockerise
+
+Scaffolds Docker deployment files for a target app directory.
+
+Usage:
+  scripts/core/init.sh [--json] docker dockerise <target-dir> [--type auto|php-apache|static-nginx] [--port 8080] [--force] [--dry-run] [--yes]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  --type VALUE   Scaffold type. Defaults to auto.
+  --port VALUE   Container port exposed by generated config. Defaults to 8080.
+  --force        Allow overwriting generated files that already exist.
+  --dry-run      Print planned files without writing them.
+  -y, --yes      Skip confirmation prompts.
+  -h, --help     Show this help text.
+
+Detection:
+  php-apache     Selected when index.php or composer.json is found.
+  static-nginx   Selected when index.html is found and PHP indicators are absent.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Dockerise help exited 0
+
+========================================================================
+Docker run help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh docker run --help
+blackhost docker run
+
+Builds and runs a Dockerised app locally, then optionally opens it in a browser.
+
+Usage:
+  scripts/core/init.sh [--json] docker run <target-dir> [--port 8080] [--container-port 8080] [--image NAME] [--name NAME] [--no-build] [--open] [--dry-run] [--yes]
+
+Options:
+  --json                  Append a compact machine-readable result object.
+  --port VALUE            Local browser port. Defaults to 8080.
+  --container-port VALUE  Container port exposed by the app. Defaults to the first Dockerfile EXPOSE value, then 8080.
+  --image NAME            Docker image tag. Defaults to blackhost-<target-dir-name>.
+  --name NAME             Container name. Defaults to blackhost-<target-dir-name>.
+  --no-build              Skip docker build and run the existing image tag.
+  --open                  Open http://localhost:<port> after the container starts.
+  --dry-run               Print commands without building, replacing, running, or opening anything.
+  -y, --yes               Skip confirmation prompts.
+  -h, --help              Show this help text.
+
+Use this after docker dockerise has created a Dockerfile for the target app.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Docker run help exited 0
+
+========================================================================
+Google Cloud CLI package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gcloud --help
+blackhost gcloud
+
+Usage:
+  scripts/core/init.sh [--json] gcloud <command> [options]
+
+Commands:
+  auth
+  check
+  install
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Google Cloud CLI package help exited 0
+
+========================================================================
+Google Cloud CLI auth help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gcloud auth --help
+blackhost gcloud auth
+
+Starts Google Cloud CLI browser authentication and validates active account state.
+
+Usage:
+  scripts/core/init.sh [--json] gcloud auth [--dry-run] [--yes]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  --dry-run      Print the browser auth command without executing it.
+  -y, --yes      Skip confirmation prompts.
+  -h, --help     Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Google Cloud CLI auth help exited 0
+
+========================================================================
+Git package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh git --help
+blackhost git
+
+Usage:
+  scripts/core/init.sh [--json] git <command> [options]
+
+Commands:
+  check
+  install
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Git package help exited 0
+
+========================================================================
+GitHub CLI package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gh --help
+blackhost gh
+
+Usage:
+  scripts/core/init.sh [--json] gh <command> [options]
+
+Commands:
+  auth
+  check
+  install
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] GitHub CLI package help exited 0
+
+========================================================================
+GitHub CLI auth help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gh auth --help
+blackhost gh auth
+
+Starts browser-based GitHub CLI authentication and waits for the user to complete it.
+
+Usage:
+  scripts/core/init.sh [--json] gh auth [--hostname github.com] [--git-protocol https|ssh] [--scopes SCOPE_LIST] [--dry-run] [--yes]
+
+Options:
+  --json                Append a compact machine-readable result object.
+  --hostname VALUE      GitHub hostname to authenticate. Defaults to github.com.
+  --git-protocol VALUE  Git protocol gh should configure: https or ssh. Defaults to https.
+  --scopes VALUE        Optional comma-separated OAuth scopes to request.
+  --dry-run             Print the browser auth command without executing it.
+  -y, --yes             Skip confirmation prompts.
+  -h, --help            Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] GitHub CLI auth help exited 0
+
+========================================================================
+Homebrew package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh homebrew --help
+blackhost homebrew
+
+Usage:
+  scripts/core/init.sh [--json] homebrew <command> [options]
+
+Commands:
+  check
+  install
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Homebrew package help exited 0
+
+========================================================================
+PHP package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh php --help
+blackhost php
+
+Usage:
+  scripts/core/init.sh [--json] php <command> [options]
+
+Commands:
+  check
+  install
+  run
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] PHP package help exited 0
+
+========================================================================
+PHP run help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh php run --help
+blackhost php run
+
+Starts a local PHP development server for a target directory, then optionally opens it in a browser.
+
+Usage:
+  scripts/core/init.sh [--json] php run <target-dir> [--host 127.0.0.1] [--port 8000] [--router FILE] [--open] [--dry-run] [--yes]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  --host VALUE   Host interface for php -S. Defaults to 127.0.0.1.
+  --port VALUE   Local browser port. Defaults to 8000.
+  --router FILE  Optional PHP router script path, relative to target-dir or absolute.
+  --open         Open http://<host>:<port> after the server starts.
+  --dry-run      Print commands without starting the server or opening the browser.
+  -y, --yes      Skip confirmation prompts.
+  -h, --help     Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] PHP run help exited 0
+
+========================================================================
+Python package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh python --help
+blackhost python
+
+Usage:
+  scripts/core/init.sh [--json] python <command> [options]
+
+Commands:
+  check
+  install
+  run
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Python package help exited 0
+
+========================================================================
+Python run help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh python run --help
+blackhost python run
+
+Starts a local Python static file server for a target directory, then optionally opens it in a browser.
+
+Usage:
+  scripts/core/init.sh [--json] python run <target-dir> [--host 127.0.0.1] [--port 8000] [--open] [--dry-run] [--yes]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  --host VALUE   Host interface for python3 -m http.server. Defaults to 127.0.0.1.
+  --port VALUE   Local browser port. Defaults to 8000.
+  --open         Open http://<host>:<port> after the server starts.
+  --dry-run      Print commands without starting the server or opening the browser.
+  -y, --yes      Skip confirmation prompts.
+  -h, --help     Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Python run help exited 0
+
+========================================================================
+YAML package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh yaml --help
+blackhost yaml
+
+Usage:
+  scripts/core/init.sh [--json] yaml <command> [options]
+
+Commands:
+  check
+  install
+  run
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] YAML package help exited 0
+
+========================================================================
+YAML run help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh yaml run --help
+blackhost yaml run
+
+Parses a YAML file with PyYAML to confirm the active python3 environment can read it.
+
+Usage:
+  scripts/core/init.sh [--json] yaml run <yaml-file> [--dry-run] [--yes]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  --dry-run      Print the parse command without reading the file through PyYAML.
+  -y, --yes      Skip confirmation prompts.
+  -h, --help     Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] YAML run help exited 0
+
+========================================================================
+Node package help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh node --help
+blackhost node
+
+Usage:
+  scripts/core/init.sh [--json] node <command> [options]
+
+Commands:
+  check
+  install
+  run
+  update
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Node package help exited 0
+
+========================================================================
+Node check help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh node check --help
+blackhost node check
+
+Checks whether the host is ready to run Node.js, npm, and npx workloads.
+
+Usage:
+  scripts/core/init.sh [--json] node check [--yes] [--verbose]
+
+Options:
+  --json         Append a compact machine-readable result object.
+  -y, --yes      Do not pause for the final acknowledgement prompt.
+  -v, --verbose  Print extra Node.js, npm, and npx diagnostic output when available.
+  -h, --help     Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Node check help exited 0
+
+========================================================================
+Node run help
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh node run --help
+blackhost node run
+
+Starts a local Node.js package script for a target app directory, then optionally opens it in a browser.
+
+Usage:
+  scripts/core/init.sh [--json] node run <target-dir> [--script dev] [--host 127.0.0.1] [--port 5173] [--open] [--dry-run] [--yes]
+
+Options:
+  --json          Append a compact machine-readable result object.
+  --script VALUE  npm script to run. Defaults to the first available dev, start, or serve script.
+  --host VALUE    Host value passed to the npm script after --. Defaults to 127.0.0.1.
+  --port VALUE    Local browser port passed to the npm script after --. Defaults to 5173.
+  --open          Open http://<host>:<port> after the process starts.
+  --dry-run       Print commands without starting the process or opening the browser.
+  -y, --yes       Skip confirmation prompts.
+  -h, --help      Show this help text.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Node run help exited 0
+
+========================================================================
+Python check JSON
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh --json python check --yes
+
+========================================================================
+Python Host Readiness Check
+========================================================================
+[INFO] This script does not install or change Python or pip.
+[INFO] It checks the local machine for Python 3, pip, venv support, and basic runtime execution.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+
+========================================================================
+Python 3
+========================================================================
+[ OK ] Python 3.14.4
+[INFO] Python binary: /opt/homebrew/bin/python3
+
+========================================================================
+pip
+========================================================================
+[ OK ] pip 26.0.1 from /opt/homebrew/lib/python3.14/site-packages/pip (python 3.14)
+
+========================================================================
+Python Standard Modules
+========================================================================
+[ OK ] Python module available: ensurepip
+[ OK ] Python module available: json
+[ OK ] Python module available: ssl
+[ OK ] Python module available: sqlite3
+[ OK ] Python module available: venv
+
+========================================================================
+Runtime Smoke Capability
+========================================================================
+[ OK ] Python can execute inline runtime code.
+
+========================================================================
+Summary
+========================================================================
+[ OK ] Python and pip host tooling is ready.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+{"schema":"blackhost.result","version":"0.1.0","package":"python","command":"check","status":"ok","exit_code":0,"dry_run":false,"os":"macos","os_id":"macos","os_pretty":"macOS","arch":"arm64"}
+[PASS] Python check JSON exited 0
+
+========================================================================
+Node check JSON
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh --json node check --yes
+
+========================================================================
+Node.js Host Readiness Check
+========================================================================
+[INFO] This script does not install or change Node.js, npm, or npx.
+[INFO] It checks the local machine for JavaScript runtime and package runner readiness.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+
+========================================================================
+Node.js
+========================================================================
+[ OK ] Node.js: v26.0.0
+
+========================================================================
+npm
+========================================================================
+[ OK ] npm: 11.17.0
+
+========================================================================
+npx
+========================================================================
+[ OK ] npx: 11.17.0
+
+========================================================================
+Runtime Smoke Capability
+========================================================================
+[ OK ] Node.js can execute inline runtime code.
+
+========================================================================
+Summary
+========================================================================
+[ OK ] Node.js, npm, and npx host tooling is ready.
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+{"schema":"blackhost.result","version":"0.1.0","package":"node","command":"check","status":"ok","exit_code":0,"dry_run":false,"os":"macos","os_id":"macos","os_pretty":"macOS","arch":"arm64"}
+[PASS] Node check JSON exited 0
+
+========================================================================
+AWS install dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh aws install --dry-run --yes
+
+========================================================================
+AWS CLI Installation
+========================================================================
+[INFO] This script installs AWS CLI v2 for local AWS account and deployment workflows.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Installation commands will be printed but not executed.
+[ OK ] AWS CLI is already installed.
+[WARN] Dry-run mode will still print the install path for review.
+
+========================================================================
+Official Install Path
+========================================================================
+[INFO] Recommended local host path: AWS CLI v2 official install script for the current user.
+[INFO] Run the official AWS CLI v2 install script now?
+[INFO] Auto-confirmed because --yes was provided.
++ curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
+
+========================================================================
+AWS CLI installation Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Install Check
+========================================================================
+[ OK ] aws-cli/2.34.30 Python/3.14.4 Darwin/23.4.0 source/arm64
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] AWS install dry-run exited 0
+
+========================================================================
+AWS update dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh aws update --dry-run --yes
+
+========================================================================
+AWS CLI Update
+========================================================================
+[INFO] This script updates AWS CLI v2 for local AWS account and deployment workflows.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Update commands will be printed but not executed.
+[ OK ] aws-cli/2.34.30 Python/3.14.4 Darwin/23.4.0 source/arm64
+[INFO] Run aws update now?
+[INFO] Auto-confirmed because --yes was provided.
++ aws update
+
+========================================================================
+AWS CLI update Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Update Check
+========================================================================
+[ OK ] aws-cli/2.34.30 Python/3.14.4 Darwin/23.4.0 source/arm64
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] AWS update dry-run exited 0
+
+========================================================================
+Google Cloud CLI install dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gcloud install --dry-run --yes
+
+========================================================================
+Google Cloud CLI Installation
+========================================================================
+[INFO] This script installs Google Cloud CLI for local Google Cloud account and deployment workflows.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Installation commands will be printed but not executed.
+[ OK ] Google Cloud CLI is already installed.
+[WARN] Dry-run mode will still print the install path for review.
+
+========================================================================
+macOS Install Path
+========================================================================
+[INFO] Recommended local host path: Google Cloud CLI installed through Homebrew.
+[ OK ] Homebrew is available at /opt/homebrew/bin/brew.
+[INFO] Install Google Cloud CLI with Homebrew now?
+[INFO] Auto-confirmed because --yes was provided.
++ brew install --cask google-cloud-sdk
+
+========================================================================
+Google Cloud CLI installation Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Install Check
+========================================================================
+[INFO] Google Cloud CLI installation dry-run completed. Run without --dry-run to apply the printed commands.
+[INFO] Next review command: scripts/core/init.sh gcloud check --verbose
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Google Cloud CLI install dry-run exited 0
+
+========================================================================
+Google Cloud CLI update dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh gcloud update --dry-run --yes
+
+========================================================================
+Google Cloud CLI Update
+========================================================================
+[INFO] This script updates Google Cloud CLI for local Google Cloud account and deployment workflows.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Update commands will be printed but not executed.
+[INFO] Skipping gcloud version probe in dry-run mode.
+
+========================================================================
+macOS Update Path
+========================================================================
+[INFO] Upgrade Google Cloud CLI with Homebrew now?
+[INFO] Auto-confirmed because --yes was provided.
++ brew update
++ brew upgrade --cask google-cloud-sdk
+
+========================================================================
+Google Cloud CLI update Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Update Check
+========================================================================
+[INFO] Google Cloud CLI update dry-run completed. Run without --dry-run to apply the printed commands.
+[INFO] Next review command: scripts/core/init.sh gcloud check --verbose
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Google Cloud CLI update dry-run exited 0
+
+========================================================================
+Homebrew install dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh homebrew install --dry-run --yes
+
+========================================================================
+Homebrew Installation
+========================================================================
+[INFO] This script installs Homebrew for local package-manager workflows.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Installation commands will be printed but not executed.
+[ OK ] Homebrew is already installed.
+[WARN] Dry-run mode will still print the install path for review.
+
+========================================================================
+Official Install Path
+========================================================================
+[WARN] The Homebrew installer explains what it will do and may prompt during execution.
+[INFO] Run the official Homebrew install script now?
+[INFO] Auto-confirmed because --yes was provided.
++ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+========================================================================
+Homebrew installation Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Install Check
+========================================================================
+[ OK ] Homebrew 6.0.12
+[INFO] Homebrew binary: /opt/homebrew/bin/brew
+[INFO] Homebrew prefix: /opt/homebrew
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Homebrew install dry-run exited 0
+
+========================================================================
+Homebrew update dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh homebrew update --dry-run --yes
+
+========================================================================
+Homebrew Update
+========================================================================
+[INFO] This script updates Homebrew metadata and installed Homebrew packages.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Update commands will be printed but not executed.
+[ OK ] Homebrew 6.0.12
+[INFO] Run brew update and brew upgrade now?
+[INFO] Auto-confirmed because --yes was provided.
++ brew update
++ brew upgrade
+
+========================================================================
+Homebrew update Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Update Check
+========================================================================
+[ OK ] Homebrew 6.0.12
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Homebrew update dry-run exited 0
+
+========================================================================
+Node install dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh node install --dry-run --yes
+
+========================================================================
+Node.js Tooling Installation
+========================================================================
+[INFO] This script installs Node.js, npm, and npx for local JavaScript development work.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Installation commands will be printed but not executed.
+[ OK ] Node.js, npm, and npx are already installed.
+[WARN] Dry-run mode will still print the install path for review.
+
+========================================================================
+macOS Install Path
+========================================================================
+[INFO] Recommended local host path: Node.js installed through Homebrew.
+[ OK ] Homebrew is available at /opt/homebrew/bin/brew.
+[INFO] Install Node.js with Homebrew now?
+[INFO] Auto-confirmed because --yes was provided.
++ brew install node
+
+========================================================================
+Node.js tooling installation Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Install Check
+========================================================================
+[ OK ] Node.js: v26.0.0
+[ OK ] npm: 11.17.0
+[ OK ] npx: 11.17.0
+[INFO] Node.js installation dry-run completed. Run without --dry-run to apply the printed commands.
+[INFO] Next review command: scripts/core/init.sh node check --verbose
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Node install dry-run exited 0
+
+========================================================================
+Node update dry-run
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/scripts/core/init.sh node update --dry-run --yes
+
+========================================================================
+Node.js Tooling Update
+========================================================================
+[INFO] This script updates Node.js, npm, and npx for local JavaScript development work.
+[INFO] Current directory: /Applications/MAMP/htdocs/blackaft/site
+[INFO] Detected OS: macOS
+[INFO] Detected OS id: macos
+[INFO] Detected architecture: arm64
+[WARN] Dry-run mode is active. Update commands will be printed but not executed.
+[ OK ] Node.js: v26.0.0
+[ OK ] npm: 11.17.0
+[ OK ] npx: 11.17.0
+
+========================================================================
+macOS Update Path
+========================================================================
+[INFO] Upgrade Node.js with Homebrew now?
+[INFO] Auto-confirmed because --yes was provided.
++ brew update
++ brew upgrade node
+
+========================================================================
+Node.js tooling update Dry-Run Summary
+========================================================================
+[WARN] No host or workspace changes were executed.
+[INFO] Any readiness output after this point reflects the current host state only.
+
+========================================================================
+Post-Update Check
+========================================================================
+[ OK ] Node.js: v26.0.0
+[ OK ] npm: 11.17.0
+[ OK ] npx: 11.17.0
+[INFO] Node.js update dry-run completed. Run without --dry-run to apply the printed commands.
+[INFO] Next review command: scripts/core/init.sh node check --verbose
+[INFO] Local status page updated: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Node update dry-run exited 0
+
+========================================================================
+Stale Path Check
+========================================================================
+[PASS] No stale shortcut or state-module references found.
+
+========================================================================
+Dry-run assurance
+========================================================================
+[INFO] Command: bash /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/dry.sh
+
+------------------------------------------------------------------------
+Blackhost Dry-Run Assurance
+------------------------------------------------------------------------
+[INFO] Skill root: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost
+[INFO] Detected OS: macOS
+[INFO] Detected architecture: arm64
+
+------------------------------------------------------------------------
+aws install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json aws install --dry-run --yes
+[PASS] aws install dry-run exited 0
+[PASS] Found expected output: curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+aws update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json aws update --dry-run --yes
+[PASS] aws update dry-run exited 0
+[PASS] Found expected output: aws update
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+docker install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json docker install --dry-run --yes
+[PASS] docker install dry-run exited 0
+[PASS] Found expected output: brew install --cask docker
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+docker update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json docker update --dry-run --yes
+[PASS] docker update dry-run exited 0
+[PASS] Found expected output: brew upgrade --cask docker
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+docker update prune dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json docker update --dry-run --yes --prune
+[PASS] docker update prune dry-run exited 0
+[PASS] Found expected output: docker system prune
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gcloud install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gcloud install --dry-run --yes
+[PASS] gcloud install dry-run exited 0
+[PASS] Found expected output: brew install --cask google-cloud-sdk
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gcloud update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gcloud update --dry-run --yes
+[PASS] gcloud update dry-run exited 0
+[PASS] Found expected output: brew upgrade --cask google-cloud-sdk
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+git install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json git install --dry-run --yes
+[PASS] git install dry-run exited 0
+[PASS] Found expected output: brew install git
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+git update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json git update --dry-run --yes
+[PASS] git update dry-run exited 0
+[PASS] Found expected output: brew upgrade git
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gh install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gh install --dry-run --yes
+[PASS] gh install dry-run exited 0
+[PASS] Found expected output: brew install gh
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gh update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gh update --dry-run --yes
+[PASS] gh update dry-run exited 0
+[PASS] Found expected output: brew upgrade gh
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gh auth dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gh auth --dry-run --yes
+[PASS] gh auth dry-run exited 0
+[PASS] Found expected output: gh auth login --hostname github.com --git-protocol https --web
+[PASS] Found expected output: No browser authentication was started.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+gcloud auth dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json gcloud auth --dry-run --yes
+[PASS] gcloud auth dry-run exited 0
+[PASS] Found expected output: gcloud auth login
+[PASS] Found expected output: No browser authentication was started.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+homebrew install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json homebrew install --dry-run --yes
+[PASS] homebrew install dry-run exited 0
+[PASS] Found expected output: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+homebrew update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json homebrew update --dry-run --yes
+[PASS] homebrew update dry-run exited 0
+[PASS] Found expected output: brew upgrade
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+aws auth dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json aws auth --dry-run --yes
+[PASS] aws auth dry-run exited 0
+[PASS] Found expected output: aws sso login --profile default
+[PASS] Found expected output: No browser authentication was started.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+aws auth configure dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json aws auth --profile default --configure --dry-run --yes
+[PASS] aws auth configure dry-run exited 0
+[PASS] Found expected output: aws configure sso --profile default
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+php install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json php install --dry-run --yes
+[PASS] php install dry-run exited 0
+[PASS] Found expected output: brew install php composer
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+php update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json php update --dry-run --yes
+[PASS] php update dry-run exited 0
+[PASS] Found expected output: brew upgrade php composer
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+python install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json python install --dry-run --yes
+[PASS] python install dry-run exited 0
+[PASS] Found expected output: brew install python
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+python update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json python update --dry-run --yes
+[PASS] python update dry-run exited 0
+[PASS] Found expected output: brew upgrade python
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+yaml install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json yaml install --dry-run --yes
+[PASS] yaml install dry-run exited 0
+[PASS] Found expected output: python3 -m venv
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+yaml update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json yaml update --dry-run --yes
+[PASS] yaml update dry-run exited 0
+[PASS] Found expected output: python3 -m venv
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+node install dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json node install --dry-run --yes
+[PASS] node install dry-run exited 0
+[PASS] Found expected output: brew install node
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+node update dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json node update --dry-run --yes
+[PASS] node update dry-run exited 0
+[PASS] Found expected output: brew upgrade node
+[PASS] Found expected output: Dry-Run Summary
+[PASS] Found expected output: No host or workspace changes were executed.
+[PASS] Found expected output: "schema":"blackhost.result"
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+dockerise static dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json docker dockerise /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/static-app --type static-nginx --dry-run --yes
+[PASS] dockerise static dry-run exited 0
+[PASS] Found expected output: Would write: /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/static-app/Dockerfile
+[PASS] Found expected output: Dry-run completed. No files were written.
+[PASS] Found expected output: "dry_run":true
+[PASS] Confirmed dry-run did not create: /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/static-app/Dockerfile
+[PASS] Confirmed dry-run did not create: /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/static-app/.dockerignore
+[PASS] Confirmed dry-run did not create: /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/static-app/docker
+
+------------------------------------------------------------------------
+docker run app dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json docker run /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/run-app --dry-run --yes --open
+[PASS] docker run app dry-run exited 0
+[PASS] Found expected output: docker build -t blackhost-run-app /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/run-app
+[PASS] Found expected output: docker run -d --name blackhost-run-app -p 8080:8080 blackhost-run-app
+[PASS] Found expected output: http://localhost:8080
+[PASS] Found expected output: No image was built, no container was started, and no browser was opened.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+php run app dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json php run /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/php-app --port 8091 --dry-run --yes --open
+[PASS] php run app dry-run exited 0
+[PASS] Found expected output: php -S '127.0.0.1:8091' -t '/var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/php-app'
+[PASS] Found expected output: http://127.0.0.1:8091
+[PASS] Found expected output: No server was started and no browser was opened.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+python run app dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json python run /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/python-app --port 8092 --dry-run --yes --open
+[PASS] python run app dry-run exited 0
+[PASS] Found expected output: python3 -m http.server '8092' --bind '127.0.0.1' --directory '/var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/python-app'
+[PASS] Found expected output: http://127.0.0.1:8092
+[PASS] Found expected output: No server was started and no browser was opened.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+node run app dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json node run /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/node-app --port 8093 --dry-run --yes --open
+[PASS] node run app dry-run exited 0
+[PASS] Found expected output: npm run 'dev' -- --host '127.0.0.1' --port '8093'
+[PASS] Found expected output: http://127.0.0.1:8093
+[PASS] Found expected output: No npm script was started and no browser was opened.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+yaml run dry-run
+------------------------------------------------------------------------
+[INFO] Command: scripts/core/init.sh --json yaml run /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/sample.yml --dry-run --yes
+[PASS] yaml run dry-run exited 0
+[PASS] Found expected output:  -c
+[PASS] Found expected output: /var/folders/rq/l228fdzn2j139700p4lw_3_c0000gn/T/blackhost-dry.itqvP7/sample.yml
+[PASS] Found expected output: The YAML file was not parsed.
+[PASS] Found expected output: "dry_run":true
+
+------------------------------------------------------------------------
+Dry-Run Assurance Summary
+------------------------------------------------------------------------
+[PASS] All dry-run checks passed.
+[PASS] Dry-run assurance exited 0
+
+========================================================================
+Generated local/index.json parses
+========================================================================
+[INFO] Command: sh -c python3\ -m\ json.tool\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.json\'\ \>/dev/null
+[PASS] Generated local/index.json parses exited 0
+
+========================================================================
+Generated local/index.json includes Node tools
+========================================================================
+[INFO] Command: sh -c python3\ -c\ \'import\ json\,\ sys\;\ data=json.load\(open\(sys.argv\[1\]\)\)\;\ tools=data\[\"packages\"\]\[\"node\"\]\[\"tools\"\]\;\ assert\ all\(name\ in\ tools\ for\ name\ in\ \(\"node\"\,\ \"npm\"\,\ \"npx\"\)\)\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.json\'
+[PASS] Generated local/index.json includes Node tools exited 0
+
+========================================================================
+Generated local/index.json includes cloud and package-manager tools
+========================================================================
+[INFO] Command: sh -c python3\ -c\ \'import\ json\,\ sys\;\ data=json.load\(open\(sys.argv\[1\]\)\)\;\ packages=data\[\"packages\"\]\;\ assert\ \"aws\"\ in\ packages\ and\ \"aws\"\ in\ packages\[\"aws\"\]\[\"tools\"\]\;\ assert\ \"gcloud\"\ in\ packages\ and\ \"gcloud\"\ in\ packages\[\"gcloud\"\]\[\"tools\"\]\;\ assert\ \"homebrew\"\ in\ packages\ and\ \"brew\"\ in\ packages\[\"homebrew\"\]\[\"tools\"\]\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.json\'
+[PASS] Generated local/index.json includes cloud and package-manager tools exited 0
+
+========================================================================
+Generated local/index.html exists
+========================================================================
+[INFO] Command: test -f /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html
+[PASS] Generated local/index.html exists exited 0
+
+========================================================================
+Generated local/index.html includes Node tools
+========================================================================
+[INFO] Command: sh -c rg\ -q\ \'\<td\>Node.js\</td\>\<td\>node\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'\ \&\&\ rg\ -q\ \'\<td\>Node.js\</td\>\<td\>npm\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'\ \&\&\ rg\ -q\ \'\<td\>Node.js\</td\>\<td\>npx\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'
+[PASS] Generated local/index.html includes Node tools exited 0
+
+========================================================================
+Generated local/index.html includes cloud and package-manager tools
+========================================================================
+[INFO] Command: sh -c rg\ -q\ \'\<td\>AWS\ CLI\</td\>\<td\>aws\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'\ \&\&\ rg\ -q\ \'\<td\>Google\ Cloud\ CLI\</td\>\<td\>gcloud\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'\ \&\&\ rg\ -q\ \'\<td\>Homebrew\</td\>\<td\>brew\</td\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'
+[PASS] Generated local/index.html includes cloud and package-manager tools exited 0
+
+========================================================================
+Generated local/index.html includes assurance log
+========================================================================
+[INFO] Command: sh -c rg\ -q\ \'\<h2\ class=\"h5\"\>Assurance\ Log\</h2\>\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'\ \&\&\ rg\ -q\ \'assurance/log.txt\'\ \'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/index.html\'
+[PASS] Generated local/index.html includes assurance log exited 0
+
+========================================================================
+OpenAPI exposes every package manifest and operation
+========================================================================
+[INFO] Command: ruby -ryaml -e $'\nroot=\'/Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost\'\napi=YAML.load_file(File.join(root,\'schemas/skill.openapi.yml\'))\nenum=api.fetch(\'paths\').fetch(\'/manifests/{manifestName}\').fetch(\'get\').fetch(\'parameters\')[0].fetch(\'schema\').fetch(\'enum\')\npaths=api.fetch(\'paths\').keys\nmanifests=api.fetch(\'x-blackhost\').fetch(\'manifests\')\nfilesystem_manifests=api.fetch(\'x-blackhost\').fetch(\'filesystem\').fetch(\'blackhost/\').fetch(\'manifests/\')\npackages=Dir.children(File.join(root,\'scripts\')).select { |name| File.directory?(File.join(root,\'scripts\',name)) && name != \'core\' }.sort\npackages.each do |package|\n  raise "#{package} missing from manifest enum" unless enum.include?(package)\n  raise "#{package} missing from x-blackhost manifests" unless manifests.key?(package)\n  raise "#{package}.json missing from x-blackhost filesystem map" unless filesystem_manifests.key?("#{package}.json")\n  Dir.children(File.join(root,\'scripts\',package)).grep(/\\.sh$/).map { |file| File.basename(file,\'.sh\') }.reject { |cmd| cmd == \'commons\' }.sort.each do |command|\n    path="/packages/#{package}/#{command}"\n    raise "missing #{path}" unless paths.include?(path)\n  end\nend\n'
+[PASS] OpenAPI exposes every package manifest and operation exited 0
+
+========================================================================
+Assurance log exists
+========================================================================
+[INFO] Command: test -s /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/assurance/log.txt
+[PASS] Assurance log exists exited 0
+
+========================================================================
+Skill creator quick_validate
+========================================================================
+[INFO] Command: /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost/local/.venv/bin/python /Users/geogkary/.codex/skills/.system/skill-creator/scripts/quick_validate.py /Applications/MAMP/htdocs/blackaft/site/.agents/skills/blackhost
+Skill is valid!
+[PASS] Skill creator quick_validate exited 0
+
+========================================================================
+Assurance Summary
+========================================================================
+[PASS] All blackhost assurance checks passed.
