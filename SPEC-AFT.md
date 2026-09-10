@@ -39,11 +39,11 @@ Required files and directories:
 
 Optional:
 
-- `docs/`
-- `VERSION` is the skill's current version, follows [SemVer 2.0](https://semver.org/)
-- `CHANGELOG.md` 
+- `docs/` contains artifacts related to the skill's development.
+- `VERSION` is the skill's current version, follows [SemVer 2.0](https://semver.org/).
+- `CHANGELOG.md` includes one-liners with references to relevant PRs, tags and/or releases.
 - `LICENSE.md`
-- `README.md`
+- `README.md` is the only artifact designated for humans.
 
 ## SKILL.md
 
