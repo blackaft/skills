@@ -4,13 +4,13 @@
 
 This specification extends the original spec for agent skills and adapters with a more deterministic and programmatic approach, treating them as self-contained executable programs for LLMs, called [afts](https://www.merriam-webster.com/dictionary/aft). Afts act as local/deployable apps, plugins and even connectors, relying heavily on CLIs and SDKs when it comes to using third-party services.
 
-The idea behind afts 
+The idea behind ...
 
 Afts follow specific principles:
 
 - Programmatic approach, not natural language
 - Agnostic
-- Multidisciplinary implementation
+- **Multidisciplinary implementation**, meaning a single aft should employ the principles, methods and techniques of multiple disciplines (i.e. combining project management with storytelling), an approach which is in par with [Blackaft](https://blackaft.com/)'s own foundation.
 - Self-containment
 - Context distribution
 
