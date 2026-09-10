@@ -6,13 +6,13 @@ This specification extends the original spec for agent skills and adapters with 
 
 The idea behind ...
 
-Afts follow specific principles:
+## Principles
 
-- Programmatic approach, not natural language
-- Agnostic
+- **Programmatic approach**, not natural language
+- **Agnostic**
 - **Multidisciplinary implementation**, meaning a single aft should employ the principles, methods and techniques of multiple disciplines (i.e. combining project management with storytelling), an approach which is in par with [Blackaft](https://blackaft.com/)'s own foundation.
-- Self-containment
-- Context distribution
+- **Self-containment**: an aft should not require additional plugins, connectors or any other third-party services and should 
+- **Context distribution**
 
 ## Architecture
 
@@ -54,6 +54,10 @@ Optional:
 ## Manifests
 
 ## Scripts
+
+Scripts represent the bedrock of afts. They offer bundles of commands and functions and can include scripts written in different languages (i.e. .js, .python, .php, .sh).
+
+- 
 
 ### interface.sh
 
