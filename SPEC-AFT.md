@@ -31,6 +31,9 @@ Required files and directories:
 - `manifests/`
     - `interface.json` is the entrypoint manifest.
 - `scripts/`
+    - `commons/`
+        - `os.sh`
+        - `terminal.sh`
     - `interface.sh` is the universal entrypoint.
 - `templates/`
     - `manifest.json`
