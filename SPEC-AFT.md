@@ -2,6 +2,8 @@
 
 # Specification
 
+This specification extends the original spec for agent skills and adapters with a more deterministic and programmatic approach, treating them as a self-contained executable programs for LLMs, called [Afts](https://www.merriam-webster.com/dictionary/aft).
+
 Afts follow specific principles:
 
 - Programmatic approach, not natural language
