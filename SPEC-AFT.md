@@ -62,8 +62,10 @@ Scripts are the bedrock of afts and they are designed exclusively for LLMs. They
 
 
 
-### interface.sh
+### Universal Entrypoint
 
-### commons/
+### Commons
+
+The `scripts/commons/` module contains helper scripts.
 
 ## Examples
