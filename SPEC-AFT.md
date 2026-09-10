@@ -1,3 +1,5 @@
+> v1.0.0-beta
+
 # Specification
 
 Afts follow specific principles:
