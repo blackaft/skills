@@ -33,6 +33,7 @@ Required files and directories:
 
 Optional:
 
+- `docs/`
 - `VERSION` is the skill's current version, follows [SemVer 2.0](https://semver.org/)
 - `CHANGELOG.md` 
 - `LICENSE.md`
@@ -47,3 +48,9 @@ Optional:
 ## Manifests
 
 ## Scripts
+
+### interface.sh
+
+### commons/
+
+## Examples
