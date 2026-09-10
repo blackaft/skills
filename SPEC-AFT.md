@@ -55,9 +55,12 @@ Optional:
 
 ## Scripts
 
-Scripts represent the bedrock of afts. They offer bundles of commands and functions and can include scripts written in different languages (i.e. .js, .python, .php, .sh).
+Scripts are the bedrock of afts and they are designed exclusively for LLMs. They are organised under modules and each script offers a bundle of commands/functions.
 
-- 
+- `scripts/interface.sh` is a universal entrypoint allowing LLMs to call, load an execute an aft's modules and its scripts programmatically without having to search for or read any other files.
+- `scripts/{module-name}/module.sh` is a module's central router, granting `interface.sh` with access the available scripts.
+
+
 
 ### interface.sh
 
