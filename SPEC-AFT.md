@@ -2,7 +2,7 @@
 
 # Specification
 
-This specification extends the original spec for agent skills and adapters with a more deterministic and programmatic approach, treating them as self-contained executable programs for LLMs, called [afts](https://www.merriam-webster.com/dictionary/aft). Afts act as local/deployable apps, plugins and even connectors, relying heavily on CLIs and SDKs when it comes to using third-party services.
+This specification extends the original spec for agent skills and adapters with a more deterministic and programmatic approach, treating them as self-contained executable programs for LLMs, called [afts](https://www.merriam-webster.com/dictionary/aft). Afts act as local/deployable apps, plugins and even connectors, relying almost exclusively on CLIs and SDKs bundled under executable scripts designed specifically for LLMs.
 
 The idea behind ...
 
